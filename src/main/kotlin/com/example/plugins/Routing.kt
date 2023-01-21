@@ -1,6 +1,6 @@
 package com.example.plugins
 
-import io.ktor.server.routing.*
+import com.example.routes.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.http.*
@@ -12,6 +12,11 @@ fun Application.configureRouting() {
             call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
         }
     }
-    routing {
-    }
+
+    homeRoute()
+    loginRoute()
+    newsRoute()
+    recyclePointRoute()
+    rubbishTypeRoute()
+
 }

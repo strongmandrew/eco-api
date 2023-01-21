@@ -1,7 +1,6 @@
 package com.example.plugins
 
 import io.ktor.server.sessions.*
-import io.ktor.server.response.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import com.auth0.jwt.JWT
@@ -32,6 +31,5 @@ fun Application.configureSecurity() {
                 }
             }
         }
-    routing {
-    }
+
 }
