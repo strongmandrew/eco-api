@@ -14,14 +14,24 @@ fun Application.recyclePointRoute() {
 
             route("/{id}") {
 
+                put(Endpoint.APPROVE.path) {
+
+                }
+
                 get {
 
 
                 }
 
-                get(Endpoint.REVIEW.path) {
+                route(Endpoint.REVIEW.path) {
 
+                    get {
 
+                    }
+
+                    post {
+
+                    }
 
                 }
             }
