@@ -8,6 +8,10 @@ fun Application.recyclePointRoute() {
     routing {
         route(Endpoint.RECYCLE_POINT.path) {
 
+            get {
+
+            }
+
             post {
 
             }
@@ -15,6 +19,11 @@ fun Application.recyclePointRoute() {
             route("/{id}") {
 
                 put(Endpoint.APPROVE.path) {
+
+                }
+
+                put(Endpoint.DISAPPROVE.path) {
+
 
                 }
 

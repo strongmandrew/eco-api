@@ -1,4 +1,4 @@
-package com.example.domain
+package com.example.domain.dao
 
 import com.example.entity.User
 import com.example.utils.ServiceResult
