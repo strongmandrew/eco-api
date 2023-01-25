@@ -1,5 +1,6 @@
 package com.example.domain.usecase.news
 
+import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.NewsDao
 import com.example.entity.News
@@ -19,7 +20,7 @@ class GetNews(
             }
             is ServiceResult.Error -> {
                 Response(
-                    errors = result.error
+                    error = ErrorResponse(result.error.name, result.error.message)
                 )
             }
         }

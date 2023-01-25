@@ -9,6 +9,7 @@ fun Application.configureSerialization() {
     install(ContentNegotiation) {
         json(Json {
             encodeDefaults = false
+            prettyPrint = true
         })
 
     }

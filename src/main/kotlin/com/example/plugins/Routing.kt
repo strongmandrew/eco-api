@@ -5,6 +5,7 @@ import io.ktor.server.response.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -12,11 +13,12 @@ fun Application.configureRouting() {
             call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
         }
     }
-
-    homeRoute()
-    loginRoute()
-    newsRoute()
-    recyclePointRoute()
-    rubbishTypeRoute()
+    routing {
+        homeRoute()
+        loginRoute()
+        newsRoute()
+        recyclePointRoute()
+        rubbishTypeRoute()
+    }
 
 }

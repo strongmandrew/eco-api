@@ -1,5 +1,6 @@
 package com.example.domain.usecase.recyclePoint
 
+import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.RecyclePointDao
 import com.example.entity.RecyclePoint
@@ -19,7 +20,7 @@ class GetRecyclePoints(
             }
             is ServiceResult.Error -> {
                 Response(
-                    errors = points.error
+                    error = ErrorResponse(points.error.name, points.error.message)
                 )
             }
         }

@@ -15,5 +15,4 @@ data class RecyclePoint(
     val totalReviews: Int? = null,
     val approved: Boolean? = null,
     val type: String,
-    val rubbishTypes: List<RubbishType>
 )

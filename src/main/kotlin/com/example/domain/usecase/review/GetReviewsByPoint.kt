@@ -1,5 +1,6 @@
 package com.example.domain.usecase.review
 
+import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.ReviewDao
 import com.example.entity.Review
@@ -19,7 +20,7 @@ class GetReviewsByPoint(
             }
             is ServiceResult.Error -> {
                 Response(
-                    errors = result.error
+                    error = ErrorResponse(result.error.name, result.error.message)
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.example.domain.usecase.rubbishType
 
+import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.RubbishTypeDao
 import com.example.entity.RubbishType
@@ -19,7 +20,7 @@ class InsertRubbishType(
             }
             is ServiceResult.Error -> {
                 Response(
-                    errors = result.error
+                    error = ErrorResponse(result.error.name, result.error.message)
                 )
             }
         }

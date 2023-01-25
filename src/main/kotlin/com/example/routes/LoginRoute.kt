@@ -3,20 +3,19 @@ package com.example.routes
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
-fun Application.loginRoute() {
+fun Routing.loginRoute() {
 
-    routing {
+    route(Endpoint.LOGIN.path) {
 
-        route(Endpoint.LOGIN.path) {
-
-            get("/{id}") {
-
-            }
-
-            post {
-
-            }
+        get("/{id}") {
 
         }
+
+        post {
+
+        }
+
     }
+
+
 }

@@ -1,18 +1,17 @@
-package com.example.domain.usecase.review
+package com.example.domain.usecase.recyclePoint
 
 import com.example.domain.ErrorResponse
 import com.example.domain.Response
-import com.example.domain.dao.ReviewDao
-import com.example.entity.Review
+import com.example.domain.dao.RecyclePointDao
 import com.example.utils.ServiceResult
 
-class InsertPointReview(
-    private val reviewDao: ReviewDao
+class DeleteRecyclePoint(
+    private val recyclePointDao: RecyclePointDao
 ) {
 
-    suspend operator fun invoke(review: Review): Response<Review> {
+    suspend operator fun invoke(idPoint: Int): Response<Boolean> {
 
-        return when (val result = reviewDao.postReview(review)) {
+        return when(val result = recyclePointDao.deletePoint(idPoint)) {
 
             is ServiceResult.Success -> {
                 Response(
@@ -25,6 +24,5 @@ class InsertPointReview(
                 )
             }
         }
-
     }
 }

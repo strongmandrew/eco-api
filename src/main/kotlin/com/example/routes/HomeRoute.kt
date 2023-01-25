@@ -4,15 +4,15 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.homeRoute() {
+fun Routing.homeRoute() {
 
-    routing {
 
-        get(Endpoint.HOME.path) {
+    get(Endpoint.HOME.path) {
 
-            call.respondText { "Welcome to Eco! REST API.\nSUAI, 2023" }
-        }
-
+        call.respondText { "Welcome to Eco! REST API.\nSUAI, 2023" }
     }
+
+
+
 
 }
