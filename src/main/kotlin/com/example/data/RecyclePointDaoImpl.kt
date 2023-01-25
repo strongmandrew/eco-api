@@ -135,7 +135,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
                 }
 
                 is ServiceResult.Error -> {
-                    ServiceResult.Error(typeId.error)
+                    ServiceResult.Error(Errors.INSERT_FAILED)
                 }
             }
 
@@ -146,8 +146,20 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
+    override suspend fun insertPhotoPath(idPoint: Int, photoPath: String): ServiceResult<Boolean> {
+        return try {
+            dbQuery { RecyclePointTable.update(where = {RecyclePointTable.id eq idPoint}, body =
+            {it[RecyclePointTable.photoPath] = photoPath}) }
+            ServiceResult.Success(true)
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
     override suspend fun uploadMultipartPhoto(photoBytes: ByteArray, photoName: String):
             ServiceResult<Boolean> {
+
         return try {
             val path = "${Const.PHOTO_PATH}/$photoName"
             File(path).writeBytes(photoBytes)

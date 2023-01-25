@@ -25,12 +25,14 @@ class InsertRecyclePoint(
                     is ServiceResult.Success -> {
 
                         Response(
-                            data = recyclePoint
+                            data = recyclePoint,
+                            statusCode = 201
                         )
 
                     }
                     is ServiceResult.Error -> {
                         Response(
+                            statusCode = insert.error.statusCode,
                             error = ErrorResponse(insert.error.name, insert.error.message)
                         )
                     }
@@ -39,6 +41,7 @@ class InsertRecyclePoint(
             }
             is ServiceResult.Error -> {
                 Response(
+                    statusCode = result.error.statusCode,
                     error = ErrorResponse(result.error.name, result.error.message)
                 )
             }

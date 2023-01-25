@@ -12,4 +12,5 @@ interface RecyclePointDao {
     suspend fun changePointApprovalById(idPoint: Int, approval: Boolean): ServiceResult<Boolean>
     suspend fun getPointApprovalById(idPoint: Int): ServiceResult<Boolean>
     suspend fun deletePoint(idPoint: Int): ServiceResult<Boolean>
+    suspend fun insertPhotoPath(idPoint: Int, photoPath: String): ServiceResult<Boolean>
 }

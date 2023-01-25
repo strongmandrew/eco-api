@@ -19,10 +19,12 @@ fun Application.configureKoin() {
 val recyclePointModule = module {
     single<RecyclePointDao> { RecyclePointDaoImpl() }
 
+    factory { RecyclePointFileNameGenerator() }
+
     single { ChangeRecyclePointApproval(get()) }
     single { GetRecyclePointById(get()) }
     single { GetRecyclePoints(get()) }
     single { InsertRecyclePoint(get()) }
-    single { SetRecyclePointPhoto(get()) }
+    single { SetRecyclePointPhoto(get(), get()) }
     single { DeleteRecyclePoint(get()) }
 }

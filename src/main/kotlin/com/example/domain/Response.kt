@@ -7,8 +7,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Response<T>(
     val data: T? = null,
+    val statusCode: Int,
     val error: ErrorResponse? = null
 )
+
 
 @Serializable
 data class ErrorResponse(val code: String, val description: String)

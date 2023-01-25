@@ -6,9 +6,11 @@ import com.example.domain.dao.RecyclePointDao
 import com.example.entity.RecyclePoint
 import com.example.plugins.recyclePointModule
 import com.example.utils.ServiceResult
+import io.ktor.http.*
 
 class SetRecyclePointPhoto(
-    private val recyclePointDao: RecyclePointDao
+    private val recyclePointDao: RecyclePointDao,
+    private val recyclePointFileNameGenerator: RecyclePointFileNameGenerator
 ) {
 
     suspend operator fun invoke(photoBytes: ByteArray, idPoint: Int): Response<Boolean> {
@@ -16,18 +18,33 @@ class SetRecyclePointPhoto(
         return when (val point = recyclePointDao.getPointById(idPoint)) {
 
             is ServiceResult.Success -> {
-                val photoName = "${point.data.streetName}&${point.data.streetHouseNum}&${point
-                    .data.latitude}&${point.data.longitude}"
+
+                val photoName = recyclePointFileNameGenerator(point.data)
 
                 when (val photo = recyclePointDao.uploadMultipartPhoto(photoBytes, photoName)) {
 
                     is ServiceResult.Success -> {
-                        Response(
-                            data = photo.data
-                        )
+
+                        when (val entry = recyclePointDao.insertPhotoPath(idPoint, photoName)) {
+
+                            is ServiceResult.Success -> {
+                                Response(
+                                    data = entry.data,
+                                    statusCode = 201
+                                )
+                            }
+                            is ServiceResult.Error -> {
+                                Response(
+                                    statusCode = entry.error.statusCode,
+                                    error = ErrorResponse(entry.error.name, entry.error.message)
+                                    )
+
+                            }
+                        }
                     }
                     is ServiceResult.Error -> {
                         Response(
+                            statusCode = photo.error.statusCode,
                             error = ErrorResponse(photo.error.name, photo.error.message)
                         )
                     }
@@ -36,6 +53,7 @@ class SetRecyclePointPhoto(
 
             is ServiceResult.Error -> {
                 Response(
+                    statusCode = point.error.statusCode,
                     error = ErrorResponse(point.error.name, point.error.message)
                 )
             }

@@ -78,9 +78,10 @@ fun Routing.recyclePointRoute() {
 
                     val id = call.parameters["id"]
 
-                    var response = Response<Boolean>(error = ErrorResponse(Errors.DATABASE_ERROR
+                    var response = Response<Boolean>(error = ErrorResponse(Errors.FILE_SYSTEM_ERROR
                         .name,
-                        Errors.DATABASE_ERROR.message))
+                        Errors.FILE_SYSTEM_ERROR.message),
+                        statusCode = Errors.FILE_SYSTEM_ERROR.statusCode)
 
                     val multipart = call.receiveMultipart()
                     multipart.forEachPart { part ->

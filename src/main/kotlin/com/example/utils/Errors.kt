@@ -2,18 +2,20 @@ package com.example.utils
 
 import io.ktor.http.*
 
-enum class Errors(val message: String) {
+enum class Errors(val message: String, val statusCode: Int = 500) {
     DATABASE_ERROR(
         message ="An error occurred trying to reach database",
     ),
     EMPTY_DATA(
         message = "Empty result dataset",
+        statusCode = 204
     ),
     INSERT_FAILED(
         message = "Unable to insert data",
     ),
     ID_NOT_FOUND(
         message = "Input id cannot be found in database",
+        statusCode = 204
     ),
     UPDATE_FAILED(
         message = "Failed to update database entry",
@@ -22,7 +24,8 @@ enum class Errors(val message: String) {
         message = "Failed to upload a file"
     ),
     ALREADY_EXISTS(
-        message = "Data already exists in database"
+        message = "Data already exists in database",
+        statusCode = 202
     )
 
 }

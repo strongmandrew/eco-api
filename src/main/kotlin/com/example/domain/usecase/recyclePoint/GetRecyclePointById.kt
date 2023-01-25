@@ -15,12 +15,14 @@ class GetRecyclePointById(
         return when (val result = recyclePointDao.getPointById(idPoint)) {
             is ServiceResult.Success -> {
                 Response(
-                    data = result.data
+                    data = result.data,
+                    statusCode = 200
                 )
 
             }
             is ServiceResult.Error -> {
                 Response(
+                    statusCode = result.error.statusCode,
                     error = ErrorResponse(result.error.name, result.error.message)
                 )
             }
