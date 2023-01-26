@@ -1,22 +1,22 @@
-package com.example.domain.usecase.rubbishType
+package com.example.domain.usecase.review
 
 import com.example.domain.ErrorResponse
 import com.example.domain.Response
-import com.example.domain.dao.RubbishTypeDao
-import com.example.entity.RubbishType
+import com.example.domain.dao.ReviewDao
+import com.example.entity.Review
 import com.example.utils.ServiceResult
 
-class InsertRubbishType(
-    private val rubbishTypeDao: RubbishTypeDao
+class GetReviewsByPointId(
+    private val reviewDao: ReviewDao
 ) {
 
-    suspend operator fun invoke(rubbishType: RubbishType): Response<RubbishType> {
+    suspend operator fun invoke(idPoint: Int): Response<List<Review>> {
 
-        return when (val result = rubbishTypeDao.insertRubbishType(rubbishType)) {
+        return when (val result = reviewDao.getReviewsByPointId(idPoint)){
             is ServiceResult.Success -> {
                 Response(
                     data = result.data,
-                    statusCode = 201
+                    statusCode = 200
                 )
             }
             is ServiceResult.Error -> {

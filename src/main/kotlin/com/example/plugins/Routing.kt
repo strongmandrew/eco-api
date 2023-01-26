@@ -18,6 +18,7 @@ fun Application.configureRouting() {
         loginRoute()
         newsRoute()
         recyclePointRoute()
+        reviewRoute()
         rubbishTypeRoute()
     }
 

@@ -6,23 +6,27 @@ import com.example.domain.dao.ReviewDao
 import com.example.entity.Review
 import com.example.utils.ServiceResult
 
-class GetReviewsByPoint(
+class InsertReview(
     private val reviewDao: ReviewDao
 ) {
 
-    suspend operator fun invoke(idPoint: Int): Response<List<Review>> {
+    suspend operator fun invoke(review: Review, idPoint: Int): Response<Review> {
 
-        return when (val result = reviewDao.getReviewsByPointId(idPoint)){
+        return when (val result = reviewDao.postReview(review, idPoint)) {
+
             is ServiceResult.Success -> {
                 Response(
-                    data = result.data
+                    data = result.data,
+                    statusCode = 201
                 )
             }
             is ServiceResult.Error -> {
                 Response(
+                    statusCode = result.error.statusCode,
                     error = ErrorResponse(result.error.name, result.error.message)
                 )
             }
         }
+
     }
 }

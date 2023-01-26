@@ -3,25 +3,26 @@ package com.example.domain.usecase.review
 import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.ReviewDao
-import com.example.entity.Review
 import com.example.utils.ServiceResult
 
-class InsertPointReview(
+class DeleteReviewById(
     private val reviewDao: ReviewDao
 ) {
 
-    suspend operator fun invoke(review: Review): Response<Review> {
+    suspend operator fun invoke(idReview: Int): Response<Boolean> {
 
-        return when (val result = reviewDao.postReview(review)) {
+        return when (val delete = reviewDao.deleteReviewById(idReview)) {
 
             is ServiceResult.Success -> {
                 Response(
-                    data = result.data
+                    data = delete.data,
+                    statusCode = 200
                 )
             }
             is ServiceResult.Error -> {
                 Response(
-                    error = ErrorResponse(result.error.name, result.error.message)
+                    error = ErrorResponse(delete.error.name, delete.error.message),
+                    statusCode = delete.error.statusCode
                 )
             }
         }

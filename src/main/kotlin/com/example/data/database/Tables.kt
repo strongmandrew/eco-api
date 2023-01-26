@@ -38,7 +38,7 @@ object ReviewTable: IntIdTable("review") {
     val rating = integer("rating").check("rating_range") {
         (it greater 0) and (it less 6)
     }
-    val recyclePoint = reference("recycle_point_id", RecyclePointTable.id)
+    var recyclePoint = reference("recycle_point_id", RecyclePointTable.id)
 }
 
 object RubbishTypeTable: IntIdTable("rubbish_type") {

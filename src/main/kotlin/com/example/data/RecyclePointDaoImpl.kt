@@ -149,7 +149,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
     override suspend fun insertPhotoPath(idPoint: Int, photoPath: String): ServiceResult<Boolean> {
         return try {
             dbQuery { RecyclePointTable.update(where = {RecyclePointTable.id eq idPoint}, body =
-            {it[RecyclePointTable.photoPath] = photoPath}) }
+            {it[RecyclePointTable.photoPath] = "${Const.PHOTO_PATH}\\$photoPath"}) }
             ServiceResult.Success(true)
         }
         catch (e: Exception) {
@@ -161,7 +161,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
             ServiceResult<Boolean> {
 
         return try {
-            val path = "${Const.PHOTO_PATH}/$photoName"
+            val path = "${Const.PHOTO_PATH}\\$photoName"
             File(path).writeBytes(photoBytes)
 
             if (File(path).exists()) ServiceResult.Success(true)

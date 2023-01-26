@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 data class Review(
     val id: Int? = null,
     val reviewText: String,
-    val dateOf: String,
+    val dateOf: String? = null,
     val rating: Int,
-    val pointId: Int,
-    val userId: Int
+    val pointId: Int? = null,
+    val userId: Int = 1
 )

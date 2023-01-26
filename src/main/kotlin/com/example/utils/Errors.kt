@@ -1,21 +1,19 @@
 package com.example.utils
 
-import io.ktor.http.*
-
 enum class Errors(val message: String, val statusCode: Int = 500) {
     DATABASE_ERROR(
         message ="An error occurred trying to reach database",
     ),
     EMPTY_DATA(
         message = "Empty result dataset",
-        statusCode = 204
+        statusCode = 202
     ),
     INSERT_FAILED(
         message = "Unable to insert data",
     ),
     ID_NOT_FOUND(
         message = "Input id cannot be found in database",
-        statusCode = 204
+        statusCode = 202
     ),
     UPDATE_FAILED(
         message = "Failed to update database entry",

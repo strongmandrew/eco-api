@@ -1,10 +1,12 @@
 package com.example.routes
 
-import com.example.data.RecyclePointDaoImpl
 import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.usecase.recyclePoint.*
+import com.example.domain.usecase.review.GetReviewsByPointId
+import com.example.domain.usecase.review.InsertReview
 import com.example.entity.RecyclePoint
+import com.example.entity.Review
 import com.example.utils.Const.DEFAULT_ID
 import com.example.utils.Errors
 import io.ktor.http.*
@@ -13,7 +15,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.reflect.*
 import org.koin.ktor.ext.inject
 
 fun Routing.recyclePointRoute() {
@@ -25,13 +26,16 @@ fun Routing.recyclePointRoute() {
     val insertRecyclePoint: InsertRecyclePoint by inject()
     val deleteRecyclePoint: DeleteRecyclePoint by inject()
 
+    val getReviewsByPointId: GetReviewsByPointId by inject()
+    val insertReview: InsertReview by inject()
+
     route(Endpoint.RECYCLE_POINT.path) {
 
 
         get {
             val response = getRecyclePoints()
 
-            call.respond(response)
+            call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
 
         }
 
@@ -40,7 +44,7 @@ fun Routing.recyclePointRoute() {
             val point = call.receive<RecyclePoint>()
             val response = insertRecyclePoint(point)
 
-            call.respond(response)
+            call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
 
         }
 
@@ -52,7 +56,7 @@ fun Routing.recyclePointRoute() {
 
                 val response = changeRecyclePointApproval(id?.toInt() ?: DEFAULT_ID)
 
-                call.respond(response)
+                call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
 
             }
 
@@ -61,7 +65,7 @@ fun Routing.recyclePointRoute() {
                 val id = call.parameters["id"]
 
                 val response = getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
-                call.respond(response)
+                call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
 
             }
 
@@ -69,7 +73,7 @@ fun Routing.recyclePointRoute() {
                 val id = call.parameters["id"]
                 val response = deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
 
-                call.respond(response)
+                call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
             }
 
             route(Endpoint.PHOTO.path) {
@@ -95,7 +99,7 @@ fun Routing.recyclePointRoute() {
                         part.dispose()
                     }
 
-                    call.respond(response)
+                    call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
 
                 }
             }
@@ -104,10 +108,22 @@ fun Routing.recyclePointRoute() {
 
                 get {
 
+                    val id = call.parameters["id"]
+
+                    val response = getReviewsByPointId(id?.toInt() ?: DEFAULT_ID)
+
+                    call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
+
                 }
 
                 post {
 
+                    val review = call.receive<Review>()
+
+                    val id = call.parameters["id"]
+
+                    val response = insertReview(review, id?.toInt() ?: DEFAULT_ID)
+                    call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
                 }
 
             }
