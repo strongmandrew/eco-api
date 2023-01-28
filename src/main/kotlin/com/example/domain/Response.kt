@@ -1,7 +1,5 @@
 package com.example.domain
 
-import com.example.utils.Errors
-import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 @Serializable

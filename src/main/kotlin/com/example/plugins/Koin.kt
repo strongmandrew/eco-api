@@ -1,9 +1,12 @@
 package com.example.plugins
 
+import com.example.data.NewsDaoImpl
 import com.example.data.RecyclePointDaoImpl
 import com.example.data.ReviewDaoImpl
+import com.example.domain.dao.NewsDao
 import com.example.domain.dao.RecyclePointDao
 import com.example.domain.dao.ReviewDao
+import com.example.domain.usecase.news.GetNews
 import com.example.domain.usecase.recyclePoint.*
 import com.example.domain.usecase.review.DeleteReviewById
 import com.example.domain.usecase.review.GetReviewById
@@ -18,7 +21,7 @@ fun Application.configureKoin() {
 
     install(Koin) {
         slf4jLogger()
-        modules(listOf(recyclePointModule, reviewModule))
+        modules(listOf(recyclePointModule, reviewModule, newsModule))
     }
 }
 
@@ -43,4 +46,10 @@ val reviewModule = module {
     single { GetReviewById(get()) }
     single { InsertReview(get()) }
     single { DeleteReviewById(get()) }
+}
+
+val newsModule = module {
+    single<NewsDao> { NewsDaoImpl() }
+
+    single { GetNews(get()) }
 }

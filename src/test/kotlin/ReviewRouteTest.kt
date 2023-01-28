@@ -2,12 +2,12 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 internal class ReviewRouteTest {
 
     companion object {
-        const val CORRECT_ID = 2
+        const val CORRECT_ID = 4
         const val INCORRECT_ID = 101
     }
 
@@ -15,7 +15,7 @@ internal class ReviewRouteTest {
     fun testGetReviewByIdSuccess() = testApplication {
 
         val response = client.get("/review/$CORRECT_ID")
-        assertTrue { response.status in listOf(HttpStatusCode.OK, HttpStatusCode.Accepted) }
+        assertEquals(HttpStatusCode.OK, response.status)
 
     }
 
@@ -23,7 +23,7 @@ internal class ReviewRouteTest {
     fun testGetReviewByIdFailed() = testApplication {
 
         val response = client.get("/review/$INCORRECT_ID")
-        assertTrue { response.status in listOf(HttpStatusCode.OK, HttpStatusCode.Accepted) }
+        assertEquals(HttpStatusCode.Accepted, response.status)
     }
 
 }

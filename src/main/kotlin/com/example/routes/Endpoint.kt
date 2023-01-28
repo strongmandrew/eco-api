@@ -6,7 +6,7 @@ enum class Endpoint(val path: String) {
     REVIEW(path = "/review"),
     LOGIN(path = "/user"),
     RUBBISH_TYPE(path = "/rubbish_type"),
-    NEWS("/news"),
-    APPROVE("/approve"),
-    PHOTO("/photo")
+    NEWS(path = "/news"),
+    APPROVE(path ="/approve"),
+    PHOTO(path = "/photo")
 }

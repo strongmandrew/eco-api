@@ -9,7 +9,7 @@ val mySqlConnector: String by project
 plugins {
     kotlin("jvm") version "1.8.0"
     id("io.ktor.plugin") version "2.1.3"
-                id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
 }
 
 group = "com.example"

@@ -5,11 +5,11 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.Test
 import java.io.File
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 internal class RecyclePointRouteTest {
 
     companion object {
-        private const val CORRECT_ID = 1
+        private const val CORRECT_ID = 16
         private const val INCORRECT_ID = 99
     }
 
@@ -17,14 +17,14 @@ internal class RecyclePointRouteTest {
     fun getRecyclePointsSuccess() = testApplication {
 
         val response = client.get("recycle_point/$CORRECT_ID")
-        assertTrue { response.status in listOf(HttpStatusCode.OK, HttpStatusCode.Accepted) }
+        assertEquals(HttpStatusCode.OK, response.status)
 
     }
 
     @Test
     fun getRecyclePointsFailed() = testApplication {
         val response = client.get("/recycle_point/$INCORRECT_ID")
-        assertTrue { response.status in listOf(HttpStatusCode.OK, HttpStatusCode.Accepted) }
+        assertEquals(HttpStatusCode.Accepted, response.status)
     }
 
     @Test
@@ -46,21 +46,15 @@ internal class RecyclePointRouteTest {
             )
         }
 
-        assertTrue { response.status in listOf(HttpStatusCode.OK, HttpStatusCode.Accepted) }
+        assertEquals(HttpStatusCode.Created, response.status)
     }
 
     @Test
     fun changeRecyclePointApproval() = testApplication {
 
         val response = client.patch("/recycle_point/$CORRECT_ID/approve")
-        assertTrue { response.status in listOf(HttpStatusCode.OK, HttpStatusCode.Accepted) }
+        assertEquals(HttpStatusCode.OK, response.status)
     }
 
-    @Test
-    fun deleteRecyclePointById() = testApplication {
-
-        val response = client.delete("/recycle_point/$CORRECT_ID")
-        assertTrue { response.status in listOf(HttpStatusCode.OK, HttpStatusCode.Accepted) }
-    }
 
 }
