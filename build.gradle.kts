@@ -27,8 +27,6 @@ repositories {
 
 dependencies {
 
-
-
     implementation("mysql:mysql-connector-java:$mySqlConnector")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
