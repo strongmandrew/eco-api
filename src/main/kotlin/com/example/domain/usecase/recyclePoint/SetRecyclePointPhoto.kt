@@ -3,17 +3,15 @@ package com.example.domain.usecase.recyclePoint
 import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.RecyclePointDao
-import com.example.entity.RecyclePoint
-import com.example.plugins.recyclePointModule
 import com.example.utils.ServiceResult
-import io.ktor.http.*
+import io.ktor.utils.io.*
 
 class SetRecyclePointPhoto(
     private val recyclePointDao: RecyclePointDao,
     private val recyclePointFileNameGenerator: RecyclePointFileNameGenerator
 ) {
 
-    suspend operator fun invoke(photoBytes: ByteArray, idPoint: Int): Response<Boolean> {
+    suspend operator fun invoke(photoChannel: ByteReadChannel, idPoint: Int): Response<Boolean> {
 
         return when (val point = recyclePointDao.getPointById(idPoint)) {
 
@@ -21,7 +19,7 @@ class SetRecyclePointPhoto(
 
                 val photoName = recyclePointFileNameGenerator(point.data)
 
-                when (val photo = recyclePointDao.uploadMultipartPhoto(photoBytes, photoName)) {
+                when (val photo = recyclePointDao.uploadChannelPhoto(photoChannel, photoName)) {
 
                     is ServiceResult.Success -> {
 

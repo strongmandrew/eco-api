@@ -3,9 +3,9 @@ package com.example.data
 import com.example.data.database.DatabaseFactory.dbQuery
 import com.example.domain.dao.RecyclePointDao
 import com.example.entity.RecyclePoint
-import com.example.utils.Errors
-import com.example.utils.Const
-import com.example.utils.ServiceResult
+import com.example.utils.*
+import io.ktor.util.cio.*
+import io.ktor.utils.io.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.io.File
@@ -27,6 +27,8 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.longitude,
                     RecyclePointTable.streetName,
                     RecyclePointTable.streetHouseNum,
+                    RecyclePointTable.startWorking,
+                    RecyclePointTable.endWorking,
                     RecyclePointTable.description,
                     RecyclePointTable.photoPath,
                     RecyclePointTable.totalRating,
@@ -66,6 +68,8 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.longitude,
                     RecyclePointTable.streetName,
                     RecyclePointTable.streetHouseNum,
+                    RecyclePointTable.startWorking,
+                    RecyclePointTable.endWorking,
                     RecyclePointTable.description,
                     RecyclePointTable.photoPath,
                     RecyclePointTable.totalRating,
@@ -125,6 +129,8 @@ class RecyclePointDaoImpl: RecyclePointDao {
                             it[longitude] = point.longitude
                             it[streetName] = point.streetName
                             it[streetHouseNum] = point.streetHouseNum
+                            it[startWorking] = point.startWorking.toDatabaseTime()
+                            it[endWorking] = point.endWorking.toDatabaseTime()
                             it[description] = point.locationDescription
                             it[type] = typeId.data
                         }.value.let {
@@ -157,6 +163,24 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
+    override suspend fun uploadChannelPhoto(
+        photoChannel: ByteReadChannel,
+        photoName: String
+    ): ServiceResult<Boolean> {
+
+        return try {
+            val path = "${Const.PHOTO_PATH}\\$photoName"
+            photoChannel.copyAndClose(File(path).writeChannel())
+
+            if (File(path).exists()) ServiceResult.Success(true)
+            else ServiceResult.Error(Errors.FILE_SYSTEM_ERROR)
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.FILE_SYSTEM_ERROR)
+        }
+    }
+
+    @Unused
     override suspend fun uploadMultipartPhoto(photoBytes: ByteArray, photoName: String):
             ServiceResult<Boolean> {
 
@@ -166,6 +190,24 @@ class RecyclePointDaoImpl: RecyclePointDao {
 
             if (File(path).exists()) ServiceResult.Success(true)
             else ServiceResult.Error(Errors.FILE_SYSTEM_ERROR)
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.FILE_SYSTEM_ERROR)
+        }
+    }
+
+    override suspend fun downloadPointPhoto(idPoint: Int): ServiceResult<ByteReadChannel> {
+        return try {
+            dbQuery {
+                RecyclePointTable.select { RecyclePointTable.id eq idPoint }.adjustSlice {
+                    slice(RecyclePointTable.photoPath) }.singleOrNull()?.let {
+
+                    val path = it[RecyclePointTable.photoPath] ?: ""
+                    val channel = File(path).readChannel()
+                    ServiceResult.Success(channel)
+
+                } ?: ServiceResult.Error(Errors.EMPTY_DATA)
+            }
         }
         catch (e: Exception) {
             ServiceResult.Error(Errors.FILE_SYSTEM_ERROR)
@@ -211,6 +253,8 @@ class RecyclePointDaoImpl: RecyclePointDao {
             longitude = row[RecyclePointTable.longitude],
             streetName = row[RecyclePointTable.streetName],
             streetHouseNum = row[RecyclePointTable.streetHouseNum],
+            startWorking = row[RecyclePointTable.startWorking].toString(),
+            endWorking = row[RecyclePointTable.endWorking].toString(),
             locationDescription = row[RecyclePointTable.description],
             photoPath = row[RecyclePointTable.photoPath],
             totalRating = row[RecyclePointTable.totalRating],

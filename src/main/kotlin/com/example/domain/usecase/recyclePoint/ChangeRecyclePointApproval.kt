@@ -25,6 +25,7 @@ class ChangeRecyclePointApproval (
                         )
                     }
                     is ServiceResult.Error -> {
+
                         Response(
                             statusCode = result.error.statusCode,
                             error = ErrorResponse(result.error.name, result.error.message)

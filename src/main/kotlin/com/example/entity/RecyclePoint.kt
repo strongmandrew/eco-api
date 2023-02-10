@@ -9,6 +9,8 @@ data class RecyclePoint(
     val longitude: Double,
     val streetName: String,
     val streetHouseNum: String,
+    val startWorking: String,
+    val endWorking: String,
     val locationDescription: String? = null,
     val photoPath: String? = null,
     val totalRating: Int? = null,

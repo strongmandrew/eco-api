@@ -1,20 +1,17 @@
 package com.example.routes
 
-import com.example.domain.ErrorResponse
-import com.example.domain.Response
 import com.example.domain.usecase.recyclePoint.*
 import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
 import com.example.entity.RecyclePoint
 import com.example.entity.Review
 import com.example.utils.Const.DEFAULT_ID
-import com.example.utils.Errors
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.*
 import org.koin.ktor.ext.inject
 
 fun Routing.recyclePointRoute() {
@@ -22,6 +19,7 @@ fun Routing.recyclePointRoute() {
     val getRecyclePoints: GetRecyclePoints by inject()
     val getRecyclePointById: GetRecyclePointById by inject()
     val setRecyclePointPhoto: SetRecyclePointPhoto by inject()
+    val downloadPointPhoto: DownloadPointPhoto by inject()
     val changeRecyclePointApproval: ChangeRecyclePointApproval by inject()
     val insertRecyclePoint: InsertRecyclePoint by inject()
     val deleteRecyclePoint: DeleteRecyclePoint by inject()
@@ -81,25 +79,22 @@ fun Routing.recyclePointRoute() {
                 patch {
 
                     val id = call.parameters["id"]
+                    val channel = call.receiveChannel()
 
-                    var response = Response<Boolean>(error = ErrorResponse(Errors.FILE_SYSTEM_ERROR
-                        .name,
-                        Errors.FILE_SYSTEM_ERROR.message),
-                        statusCode = Errors.FILE_SYSTEM_ERROR.statusCode)
-
-                    val multipart = call.receiveMultipart()
-                    multipart.forEachPart { part ->
-                        when (part) {
-                            is PartData.FileItem -> {
-                                response = setRecyclePointPhoto(part.streamProvider()
-                                    .readBytes(), id?.toInt() ?: DEFAULT_ID )
-                            }
-                            else -> {}
-                        }
-                        part.dispose()
-                    }
+                    val response = setRecyclePointPhoto(channel, id?.toInt() ?: DEFAULT_ID)
 
                     call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
+
+                }
+
+                get {
+
+                    val id = call.parameters["id"]
+                    val response = downloadPointPhoto(id?.toInt() ?: DEFAULT_ID)
+
+                    response.data?.let {
+                        call.respondBytes(bytes = it.toByteArray(), status = HttpStatusCode.OK)
+                    }
 
                 }
             }

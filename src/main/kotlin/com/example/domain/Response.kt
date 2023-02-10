@@ -11,4 +11,4 @@ data class Response<T>(
 
 
 @Serializable
-data class ErrorResponse(val code: String, val description: String)
+data class ErrorResponse(val name: String, val description: String)

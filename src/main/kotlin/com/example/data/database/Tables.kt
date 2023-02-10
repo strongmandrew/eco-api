@@ -1,9 +1,9 @@
 package com.example.data
 
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.sql.javatime.time
 import java.time.LocalDateTime
 
 object NewsTable: IntIdTable("news") {
@@ -18,6 +18,8 @@ object RecyclePointTable: IntIdTable("recycle_point") {
     val longitude = double("longitude")
     val streetName = varchar("street_name", 45)
     val streetHouseNum = varchar("street_house_num", 8)
+    val startWorking = time("start_working")
+    val endWorking = time("end_working")
     val description = varchar("location_description", 256).nullable()
     val photoPath = varchar("photo_path", 128).nullable()
     val totalRating = integer("total_rating").default(0)

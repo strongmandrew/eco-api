@@ -14,7 +14,7 @@ internal class RecyclePointRouteTest {
     }
 
     @Test
-    fun getRecyclePointsSuccess() = testApplication {
+    fun getRecyclePointSuccess() = testApplication {
 
         val response = client.get("recycle_point/$CORRECT_ID")
         assertEquals(HttpStatusCode.OK, response.status)
@@ -22,7 +22,7 @@ internal class RecyclePointRouteTest {
     }
 
     @Test
-    fun getRecyclePointsFailed() = testApplication {
+    fun getRecyclePointFailed() = testApplication {
         val response = client.get("/recycle_point/$INCORRECT_ID")
         assertEquals(HttpStatusCode.Accepted, response.status)
     }
