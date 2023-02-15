@@ -1,6 +1,8 @@
 package com.example.data
 
 import com.example.data.database.DatabaseFactory.dbQuery
+import com.example.data.database.RecyclePointTable
+import com.example.data.database.RecyclePointTypeTable
 import com.example.domain.dao.RecyclePointDao
 import com.example.entity.RecyclePoint
 import com.example.utils.*
@@ -154,7 +156,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
 
     override suspend fun insertPhotoPath(idPoint: Int, photoPath: String): ServiceResult<Boolean> {
         return try {
-            dbQuery { RecyclePointTable.update(where = {RecyclePointTable.id eq idPoint}, body =
+            dbQuery { RecyclePointTable.update(where = { RecyclePointTable.id eq idPoint}, body =
             {it[RecyclePointTable.photoPath] = "${Const.PHOTO_PATH}\\$photoPath"}) }
             ServiceResult.Success(true)
         }

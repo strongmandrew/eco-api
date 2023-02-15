@@ -4,9 +4,9 @@ enum class Endpoint(val path: String) {
     HOME(path = "/"),
     RECYCLE_POINT(path = "/recycle_point"),
     REVIEW(path = "/review"),
-    LOGIN(path = "/user"),
     RUBBISH_TYPE(path = "/rubbish_type"),
     NEWS(path = "/news"),
     APPROVE(path ="/approve"),
-    PHOTO(path = "/photo")
+    PHOTO(path = "/photo"),
+    USER("/user"),
 }

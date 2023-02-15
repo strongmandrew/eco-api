@@ -1,16 +1,45 @@
-package com.example.data
+package com.example.data.database
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.javatime.time
+import java.time.LocalDate
 import java.time.LocalDateTime
+
+object UserTable: IntIdTable("user") {
+    val firstName = varchar("first_name", 45)
+    val lastName = varchar("last_name", 45)
+    val email = varchar("email", 128)
+    val password = varchar("password", 256)
+    val dateOfBirth = date("date_of_birth")
+    val dateOfRegistration = date("date_of_registration")
+        .clientDefault { LocalDate.now() }
+    val image = varchar("image_resource_name", 128)
+    val emailVerified = bool("email_verified").default(false)
+    val roleId = reference("role_id", RoleTable.id)
+}
+
+object EmailBlacklistTable: IntIdTable("email_blacklist") {
+    val email = varchar("email", 128)
+}
+
+object RoleTable: IntIdTable("role") {
+    val role = varchar("role", 45)
+    val description = varchar("description", 256).nullable()
+}
 
 object NewsTable: IntIdTable("news") {
     val title = varchar("title", 128)
     val imageUrl = varchar("image_url", 128)
     val dateCreated = datetime("date_of")
     val url = varchar("url", 128)
+}
+
+object UserEmailCodeTable: IntIdTable("user_email_code") {
+    val email = varchar("email", 128)
+    val code = integer("code")
 }
 
 object RecyclePointTable: IntIdTable("recycle_point") {

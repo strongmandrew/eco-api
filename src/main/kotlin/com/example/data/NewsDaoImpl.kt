@@ -1,6 +1,7 @@
 package com.example.data
 
 import com.example.data.database.DatabaseFactory.dbQuery
+import com.example.data.database.NewsTable
 import com.example.domain.dao.NewsDao
 import com.example.entity.News
 import com.example.utils.Errors

@@ -1,6 +1,8 @@
 package com.example.data
 
 import com.example.data.database.DatabaseFactory.dbQuery
+import com.example.data.database.RecyclePointTable
+import com.example.data.database.ReviewTable
 import com.example.domain.dao.ReviewDao
 import com.example.entity.Review
 import com.example.utils.Errors
