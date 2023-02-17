@@ -5,6 +5,7 @@ val koinKtorVersion: String by project
 val logbackVersion: String by project
 val exposedVersion: String by project
 val mySqlConnector: String by project
+val javaxMailVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.8.0"
@@ -42,6 +43,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+
+    implementation("javax.mail:javax.mail-api:$javaxMailVersion")
+    implementation("com.sun.mail:javax.mail:$javaxMailVersion")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")

@@ -25,9 +25,9 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
         message = "Data already exists in database",
         statusCode = 202
     ),
-    INVALID_EMAIL(
-        message = "Email is malformed!",
-        statusCode = 400
-    )
+    EMAIL_SERVICE_UNAVAILABLE(
+        message = "Email service is temporally unavailable",
+        statusCode = 500
+    ),
 
 }
