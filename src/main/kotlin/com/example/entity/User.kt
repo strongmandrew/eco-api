@@ -10,7 +10,7 @@ data class User(
     val email: String,
     val password: String,
     val dateOfBirth: String,
-    val dateOfRegistration: String,
+    val dateOfRegistration: String? = null,
     val userImage: String,
     val emailVerified: Boolean? = null,
     val role: Int? = null

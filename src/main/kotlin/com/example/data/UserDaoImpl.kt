@@ -22,16 +22,14 @@ class UserDaoImpl : UserDao {
                     it[email] = user.email
                     it[password] = user.password
                     it[dateOfBirth] = user.dateOfBirth.toDatabaseDate()
-                    it[dateOfRegistration] = user.dateOfRegistration.toDatabaseDate()
                     it[image] = user.userImage
-                    it[emailVerified] = user.emailVerified ?: false
-                    it[roleId]._value = user.role
-                }.resultedValues?.toList()?.singleOrNull()?.let {
+                }.resultedValues?.singleOrNull()?.let {
                     ServiceResult.Success(rowToUser(it))
                 } ?: ServiceResult.Error(Errors.INSERT_FAILED)
             }
         }
         catch (e: Exception) {
+            println(e)
             ServiceResult.Error(Errors.DATABASE_ERROR)
         }
     }
@@ -181,7 +179,7 @@ class UserDaoImpl : UserDao {
                 .toString(),
             userImage = row[UserTable.image],
             emailVerified = row[UserTable.emailVerified],
-            role = row[UserTable.roleId].value
+            role = row[UserTable.roleId]
         )
     }
 }

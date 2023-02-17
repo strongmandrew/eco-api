@@ -1,5 +1,6 @@
 package com.example.data.database
 
+import com.example.data.database.RubbishTypeTable.references
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.javatime.date
@@ -18,7 +19,7 @@ object UserTable: IntIdTable("user") {
         .clientDefault { LocalDate.now() }
     val image = varchar("image_resource_name", 128)
     val emailVerified = bool("email_verified").default(false)
-    val roleId = reference("role_id", RoleTable.id)
+    val roleId = integer("role_id").default(1).references(RoleTable.id)
 }
 
 object EmailBlacklistTable: IntIdTable("email_blacklist") {

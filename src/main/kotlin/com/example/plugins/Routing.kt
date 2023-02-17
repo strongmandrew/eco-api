@@ -15,7 +15,7 @@ fun Application.configureRouting() {
     }
     routing {
         homeRoute()
-        loginRoute()
+        userRoute()
         newsRoute()
         recyclePointRoute()
         reviewRoute()

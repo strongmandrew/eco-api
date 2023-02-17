@@ -9,4 +9,5 @@ enum class Endpoint(val path: String) {
     APPROVE(path ="/approve"),
     PHOTO(path = "/photo"),
     USER("/user"),
+    REGISTER("/register")
 }

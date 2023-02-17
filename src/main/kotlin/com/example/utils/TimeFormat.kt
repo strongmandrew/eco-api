@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 
 const val TIME_FORMAT = "HH:mm"
 const val DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss"
-const val DATE_FORMAT = "yyyy-mm-dd"
+const val DATE_FORMAT = "yyyy-MM-dd"
 
 fun String.toDatabaseTime(): LocalTime {
     return LocalTime.parse(this, DateTimeFormatter.ofPattern(TIME_FORMAT))
