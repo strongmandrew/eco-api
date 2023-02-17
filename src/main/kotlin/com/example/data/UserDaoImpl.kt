@@ -51,6 +51,29 @@ class UserDaoImpl : UserDao {
         }
     }
 
+    override suspend fun updateValidationCode(
+        email: String,
+        code: Int,
+    ): ServiceResult<Boolean> {
+
+        return try {
+            dbQuery {
+                if (UserEmailCodeTable.update(
+                    where = { UserEmailCodeTable.email eq email },
+                    body = { it[UserEmailCodeTable.code] = code }
+                ) > 0)
+                    ServiceResult.Success(true)
+
+                else
+                    ServiceResult.Error(Errors.UPDATE_FAILED)
+            }
+        }
+        catch (e: Exception) {
+
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
     override suspend fun setValidationCode(email: String, code: Int):
             ServiceResult<Boolean> {
 
@@ -95,7 +118,22 @@ class UserDaoImpl : UserDao {
         }
     }
 
-    override suspend fun isCodeNotBlank(email: String):
+    override suspend fun emailDoesNotExist(email: String): ServiceResult<Boolean> {
+        return try {
+            dbQuery {
+                if (UserTable.select { UserTable.email eq email }
+                    .count() < 1)
+                    ServiceResult.Success(true)
+                else
+                    ServiceResult.Error(Errors.ALREADY_EXISTS)
+            }
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
+    override suspend fun noEntriesOfEmail(email: String):
             ServiceResult<Boolean> {
         return try {
             dbQuery {
@@ -104,7 +142,7 @@ class UserDaoImpl : UserDao {
 
                     ServiceResult.Success(true)
 
-                else ServiceResult.Error(Errors.ALREADY_EXISTS)
+                else ServiceResult.Success(false)
             }
         }
         catch (e: Exception) {

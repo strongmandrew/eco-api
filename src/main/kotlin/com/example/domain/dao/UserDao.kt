@@ -8,5 +8,6 @@ import com.example.utils.ServiceResult
 interface UserDao: UserRegistration, UserValidation {
 
     suspend fun getUserByEmail(email: String): ServiceResult<User>
+    suspend fun emailDoesNotExist(email: String): ServiceResult<Boolean>
 
 }
