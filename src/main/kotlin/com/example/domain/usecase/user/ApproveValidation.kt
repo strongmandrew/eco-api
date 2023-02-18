@@ -8,7 +8,6 @@ import com.example.utils.ServiceResult
 class ApproveValidation(
     private val userDao: UserDao
 ) {
-
     suspend operator fun invoke(email: String, inputCode: Int):
             Response<Boolean> {
 
@@ -17,12 +16,25 @@ class ApproveValidation(
 
             is ServiceResult.Success -> {
 
-                Response(
-                    data = compare.data,
-                    statusCode = 200
-                )
-            }
+                when (val change = userDao.approveUserEmail(email)) {
 
+                    is ServiceResult.Success -> {
+                        Response(
+                            data = change.data,
+                            statusCode = 200
+                        )
+                    }
+
+                    is ServiceResult.Error -> {
+                        Response(
+                            error = ErrorResponse(
+                                change.error.name, change.error.message
+                            ),
+                            statusCode = change.error.statusCode
+                        )
+                    }
+                }
+            }
             is ServiceResult.Error -> {
 
                 Response(

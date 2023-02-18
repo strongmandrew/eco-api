@@ -18,6 +18,7 @@ import com.example.domain.usecase.review.DeleteReviewById
 import com.example.domain.usecase.review.GetReviewById
 import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
+import com.example.domain.usecase.user.ApproveValidation
 import com.example.domain.usecase.user.SendValidation
 import com.example.domain.usecase.user.RegisterUser
 import com.example.domain.usecase.user.SetOrUpdateValidationCode
@@ -80,4 +81,5 @@ val userModule = module {
     single { RegisterUser(get()) }
     single { SetOrUpdateValidationCode(get()) }
     single { SendValidation(get(), get(), get()) }
+    single { ApproveValidation(get()) }
 }

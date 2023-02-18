@@ -10,5 +10,6 @@ enum class Endpoint(val path: String) {
     PHOTO(path = "/photo"),
     USER("/user"),
     REGISTER("/register"),
-    VALIDATE("/validate")
+    VALIDATE("/validate"),
+    SEND("/send"),
 }

@@ -117,6 +117,26 @@ class UserDaoImpl : UserDao {
         }
     }
 
+    override suspend fun approveUserEmail(email: String): ServiceResult<Boolean> {
+        return try {
+            dbQuery {
+
+                if (UserTable.update(
+                    where = { UserTable.email eq email },
+                    body = {
+                                             it[emailVerified] = true
+                }) > 0)
+                    ServiceResult.Success(true)
+
+                else ServiceResult.Error(Errors.UPDATE_FAILED)
+            }
+        }
+
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
     override suspend fun emailDoesNotExist(email: String): ServiceResult<Boolean> {
         return try {
             dbQuery {

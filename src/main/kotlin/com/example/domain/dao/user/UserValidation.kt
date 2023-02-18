@@ -12,4 +12,5 @@ interface UserValidation {
             ServiceResult<Boolean>
     suspend fun noEntriesOfEmail(email: String):
             ServiceResult<Boolean>
+    suspend fun approveUserEmail(email: String): ServiceResult<Boolean>
 }

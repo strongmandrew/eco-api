@@ -8,5 +8,4 @@ interface UserRegistration {
     suspend fun registerUser(user: User): ServiceResult<User>
     suspend fun isEmailNotInBlacklist(email: String):
             ServiceResult<Boolean>
-
 }
