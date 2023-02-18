@@ -2,14 +2,11 @@ package com.example.domain.usecase.user
 
 import com.example.domain.ErrorResponse
 import com.example.domain.Response
-import com.example.domain.dao.UserDao
 import com.example.domain.usecase.email.CodeGenerator
-import com.example.domain.usecase.email.EmailAuthenticator
-import com.example.domain.usecase.email.EmailCredentials
 import com.example.domain.usecase.email.EmailService
 import com.example.utils.ServiceResult
 
-class ManageValidation(
+class SendValidation(
     private val setOrUpdateValidationCode: SetOrUpdateValidationCode,
     private val emailService: EmailService,
     private val codeGenerator: CodeGenerator
@@ -24,9 +21,13 @@ class ManageValidation(
 
             is ServiceResult.Success -> {
 
-                when (val mailing = emailService.sendMessage()) {
+                when (
+                    val mailing = emailService.sendMessage(email,
+                    generatedCode
+                    )) {
 
                     is ServiceResult.Success -> {
+
 
                         Response(
                             data = mailing.data,

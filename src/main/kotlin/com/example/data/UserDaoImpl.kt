@@ -9,6 +9,7 @@ import com.example.entity.User
 import com.example.utils.Errors
 import com.example.utils.ServiceResult
 import com.example.utils.toDatabaseDate
+import io.ktor.util.*
 import org.jetbrains.exposed.sql.*
 
 class UserDaoImpl : UserDao {
@@ -20,7 +21,7 @@ class UserDaoImpl : UserDao {
                     it[firstName] = user.firstName
                     it[lastName] = user.lastName
                     it[email] = user.email
-                    it[password] = user.password
+                    it[password] = sha1(user.password.toByteArray()).toString()
                     it[dateOfBirth] = user.dateOfBirth.toDatabaseDate()
                     it[image] = user.userImage
                 }.resultedValues?.singleOrNull()?.let {
@@ -138,9 +139,9 @@ class UserDaoImpl : UserDao {
                 if (UserEmailCodeTable.select { UserEmailCodeTable
                     .email eq email }.count() > 0)
 
-                    ServiceResult.Success(true)
+                    ServiceResult.Success(false)
 
-                else ServiceResult.Success(false)
+                else ServiceResult.Success(true)
             }
         }
         catch (e: Exception) {

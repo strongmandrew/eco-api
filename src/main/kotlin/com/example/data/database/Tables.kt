@@ -1,6 +1,5 @@
 package com.example.data.database
 
-import com.example.data.database.RubbishTypeTable.references
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.javatime.date

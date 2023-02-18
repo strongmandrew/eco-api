@@ -11,7 +11,7 @@ object EmailCredentials {
     const val MAIL_HOST = "mail.smtp.host"
     const val MAIL_PORT = "mail.smtp.port"
     const val MAIL_AUTH = "mail.smtp.auth"
-    const val MAIL_STARTTLS = "mail.starttls.enable"
+    const val MAIL_STARTTLS = "mail.smtp.starttls.enable"
 
     val props by lazy {
         Properties().apply {
