@@ -5,21 +5,23 @@ import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
 import com.example.entity.RecyclePoint
 import com.example.entity.Review
+import com.example.utils.Const
 import com.example.utils.Const.DEFAULT_ID
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.*
 import org.koin.ktor.ext.inject
+import java.io.File
+import java.lang.IllegalStateException
 
 fun Routing.recyclePointRoute() {
 
     val getRecyclePoints: GetRecyclePoints by inject()
     val getRecyclePointById: GetRecyclePointById by inject()
     val setRecyclePointPhoto: SetRecyclePointPhoto by inject()
-    val downloadPointPhoto: DownloadPointPhoto by inject()
     val changeRecyclePointApproval: ChangeRecyclePointApproval by inject()
     val insertRecyclePoint: InsertRecyclePoint by inject()
     val deleteRecyclePoint: DeleteRecyclePoint by inject()
@@ -28,6 +30,14 @@ fun Routing.recyclePointRoute() {
     val insertReview: InsertReview by inject()
 
     route(Endpoint.RECYCLE_POINT.path) {
+
+        route(Endpoint.PHOTO.path) {
+
+            static {
+                staticRootFolder = File(Const.PHOTO_PATH)
+                files(".")
+            }
+        }
 
 
         get {
@@ -79,24 +89,19 @@ fun Routing.recyclePointRoute() {
                 patch {
 
                     val id = call.parameters["id"]
+                    val extension = call.request
+                        .queryParameters["ext"]
+
                     val channel = call.receiveChannel()
 
-                    val response = setRecyclePointPhoto(channel, id?.toInt() ?: DEFAULT_ID)
+                    val response = setRecyclePointPhoto(channel,
+                        extension ?: throw IllegalStateException(),
+                        id?.toInt() ?: DEFAULT_ID)
 
                     call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
 
                 }
 
-                get {
-
-                    val id = call.parameters["id"]
-                    val response = downloadPointPhoto(id?.toInt() ?: DEFAULT_ID)
-
-                    response.data?.let {
-                        call.respondBytes(bytes = it.toByteArray(), status = HttpStatusCode.OK)
-                    }
-
-                }
             }
 
             route(Endpoint.REVIEW.path) {

@@ -11,6 +11,7 @@ import com.example.utils.Errors
 import com.example.utils.ServiceResult
 import com.example.utils.toDatabaseDate
 import org.jetbrains.exposed.sql.*
+import java.lang.IllegalStateException
 
 class UserDaoImpl(
     private val passwordEncrypt: PasswordEncrypt
@@ -23,7 +24,8 @@ class UserDaoImpl(
                     it[firstName] = user.firstName
                     it[lastName] = user.lastName
                     it[email] = user.email
-                    it[password] = passwordEncrypt(user.password)
+                    it[password] = passwordEncrypt(user.password ?:
+                    throw IllegalStateException())
                     it[dateOfBirth] = user.dateOfBirth.toDatabaseDate()
                     it[image] = user.userImage
                 }.resultedValues?.singleOrNull()?.let {
@@ -196,7 +198,6 @@ class UserDaoImpl(
             firstName = row[UserTable.firstName],
             lastName = row[UserTable.lastName],
             email = row[UserTable.email],
-            password = row[UserTable.password],
             dateOfBirth = row[UserTable.dateOfBirth].toString(),
             dateOfRegistration = row[UserTable.dateOfRegistration]
                 .toString(),

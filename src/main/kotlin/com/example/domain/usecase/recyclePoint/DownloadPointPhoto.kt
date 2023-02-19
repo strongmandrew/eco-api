@@ -4,8 +4,10 @@ import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.RecyclePointDao
 import com.example.utils.ServiceResult
+import com.example.utils.Unused
 import io.ktor.utils.io.*
 
+@Unused
 class DownloadPointPhoto(
     private val recyclePointDao: RecyclePointDao
 ) {

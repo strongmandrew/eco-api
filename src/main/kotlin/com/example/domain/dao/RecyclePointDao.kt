@@ -11,7 +11,7 @@ interface RecyclePointDao {
     suspend fun uploadMultipartPhoto(photoBytes: ByteArray, photoName: String): ServiceResult<Boolean>
     suspend fun uploadChannelPhoto(photoChannel: ByteReadChannel, photoName: String):
             ServiceResult<Boolean>
-    suspend fun registerPoint(point: RecyclePoint): ServiceResult<Int>
+    suspend fun registerPoint(point: RecyclePoint): ServiceResult<RecyclePoint>
     suspend fun changePointApprovalById(idPoint: Int, approval: Boolean): ServiceResult<Boolean>
     suspend fun getPointApprovalById(idPoint: Int): ServiceResult<Boolean>
     suspend fun deletePoint(idPoint: Int): ServiceResult<Boolean>

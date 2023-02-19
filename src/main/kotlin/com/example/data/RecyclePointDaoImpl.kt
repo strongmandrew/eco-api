@@ -118,7 +118,8 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
-    override suspend fun registerPoint(point: RecyclePoint): ServiceResult<Int> {
+    override suspend fun registerPoint(point: RecyclePoint):
+            ServiceResult<RecyclePoint> {
 
         return try {
 
@@ -126,24 +127,28 @@ class RecyclePointDaoImpl: RecyclePointDao {
                 is ServiceResult.Success -> {
 
                     dbQuery {
-                        RecyclePointTable.insertAndGetId {
+                        RecyclePointTable.insert {
                             it[latitude] = point.latitude
                             it[longitude] = point.longitude
                             it[streetName] = point.streetName
                             it[streetHouseNum] = point.streetHouseNum
-                            it[startWorking] = point.startWorking.toDatabaseTime()
-                            it[endWorking] = point.endWorking.toDatabaseTime()
-                            it[description] = point.locationDescription
+                            it[startWorking] =
+                                point.startWorking.toDatabaseTime()
+                            it[endWorking] =
+                                point.endWorking.toDatabaseTime()
+                            it[description] =
+                                point.locationDescription
                             it[type] = typeId.data
-                        }.value.let {
-                            ServiceResult.Success(it)
-                        }
+                        }.resultedValues?.singleOrNull()?.let {
+                            ServiceResult.Success(rowToRecyclePoint
+                                (it))
+                        } ?: ServiceResult.Error(Errors.INSERT_FAILED)
 
                     }
                 }
 
                 is ServiceResult.Error -> {
-                    ServiceResult.Error(Errors.INSERT_FAILED)
+                    ServiceResult.Error(Errors.ID_NOT_FOUND)
                 }
             }
 
@@ -157,7 +162,8 @@ class RecyclePointDaoImpl: RecyclePointDao {
     override suspend fun insertPhotoPath(idPoint: Int, photoPath: String): ServiceResult<Boolean> {
         return try {
             dbQuery { RecyclePointTable.update(where = { RecyclePointTable.id eq idPoint}, body =
-            {it[RecyclePointTable.photoPath] = "${Const.PHOTO_PATH}\\$photoPath"}) }
+            {it[RecyclePointTable.photoPath] = "${Const
+                .PHOTO_URL}/$photoPath"}) }
             ServiceResult.Success(true)
         }
         catch (e: Exception) {
@@ -198,6 +204,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
+    @Unused
     override suspend fun downloadPointPhoto(idPoint: Int): ServiceResult<ByteReadChannel> {
         return try {
             dbQuery {

@@ -11,13 +11,16 @@ class SetRecyclePointPhoto(
     private val recyclePointFileNameGenerator: RecyclePointFileNameGenerator
 ) {
 
-    suspend operator fun invoke(photoChannel: ByteReadChannel, idPoint: Int): Response<Boolean> {
+    suspend operator fun invoke(photoChannel: ByteReadChannel,
+                                extension: String, idPoint: Int):
+            Response<Boolean> {
 
         return when (val point = recyclePointDao.getPointById(idPoint)) {
 
             is ServiceResult.Success -> {
 
-                val photoName = recyclePointFileNameGenerator(point.data)
+                val photoName = recyclePointFileNameGenerator(point
+                    .data, extension)
 
                 when (val photo = recyclePointDao.uploadChannelPhoto(photoChannel, photoName)) {
 
