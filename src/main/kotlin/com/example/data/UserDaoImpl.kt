@@ -5,14 +5,16 @@ import com.example.data.database.EmailBlacklistTable
 import com.example.data.database.UserEmailCodeTable
 import com.example.data.database.UserTable
 import com.example.domain.dao.UserDao
+import com.example.domain.usecase.user.PasswordEncrypt
 import com.example.entity.User
 import com.example.utils.Errors
 import com.example.utils.ServiceResult
 import com.example.utils.toDatabaseDate
-import io.ktor.util.*
 import org.jetbrains.exposed.sql.*
 
-class UserDaoImpl : UserDao {
+class UserDaoImpl(
+    private val passwordEncrypt: PasswordEncrypt
+) : UserDao {
 
     override suspend fun registerUser(user: User): ServiceResult<User> {
         return try {
@@ -21,7 +23,7 @@ class UserDaoImpl : UserDao {
                     it[firstName] = user.firstName
                     it[lastName] = user.lastName
                     it[email] = user.email
-                    it[password] = sha1(user.password.toByteArray()).toString()
+                    it[password] = passwordEncrypt(user.password)
                     it[dateOfBirth] = user.dateOfBirth.toDatabaseDate()
                     it[image] = user.userImage
                 }.resultedValues?.singleOrNull()?.let {
