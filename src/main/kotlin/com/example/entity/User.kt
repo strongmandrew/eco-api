@@ -13,5 +13,6 @@ data class User(
     val dateOfRegistration: String? = null,
     val userImage: String,
     val emailVerified: Boolean? = null,
+    val timesChanged: Int? = null,
     val role: Int? = null
 )

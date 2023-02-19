@@ -1,11 +1,12 @@
 package com.example.routes
 
 import com.example.domain.usecase.user.ApproveValidation
+import com.example.domain.usecase.user.GetUserByEmail
 import com.example.domain.usecase.user.SendValidation
 import com.example.domain.usecase.user.RegisterUser
 import com.example.entity.User
-import com.example.entity.ValidationApprove
-import com.example.entity.ValidationSend
+import com.example.entity.EmailCodeApprove
+import com.example.entity.EmailSend
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -18,8 +19,19 @@ fun Routing.userRoute() {
     val registerUser: RegisterUser by inject()
     val sendValidation: SendValidation by inject()
     val approveValidation: ApproveValidation by inject()
+    val getUserByEmail: GetUserByEmail by inject()
 
     route(Endpoint.USER.path) {
+
+        get {
+
+            val email = call.request.queryParameters["email"]
+
+            val response = getUserByEmail(email ?: "")
+
+            call.respond(message = response, status =
+            HttpStatusCode.fromValue(response.statusCode))
+        }
 
         route(Endpoint.REGISTER.path) {
 
@@ -42,7 +54,7 @@ fun Routing.userRoute() {
 
                 post {
 
-                    val validateEmail = call.receive<ValidationSend>()
+                    val validateEmail = call.receive<EmailSend>()
 
                     val response =
                         sendValidation(validateEmail.email)
@@ -61,7 +73,7 @@ fun Routing.userRoute() {
                 post {
 
                     val compareEmailCode = call
-                        .receive<ValidationApprove>()
+                        .receive<EmailCodeApprove>()
 
                     val response = approveValidation(
                         compareEmailCode.email,

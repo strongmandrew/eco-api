@@ -202,6 +202,7 @@ class UserDaoImpl(
                 .toString(),
             userImage = row[UserTable.image],
             emailVerified = row[UserTable.emailVerified],
+            timesChanged = row[UserTable.timesChanged],
             role = row[UserTable.roleId]
         )
     }

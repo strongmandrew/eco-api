@@ -18,6 +18,7 @@ object UserTable: IntIdTable("user") {
         .clientDefault { LocalDate.now() }
     val image = varchar("image_resource_name", 128)
     val emailVerified = bool("email_verified").default(false)
+    val timesChanged = integer("times_changed").default(0)
     val roleId = integer("role_id").default(1).references(RoleTable.id)
 }
 

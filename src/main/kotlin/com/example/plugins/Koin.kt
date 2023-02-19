@@ -18,10 +18,7 @@ import com.example.domain.usecase.review.DeleteReviewById
 import com.example.domain.usecase.review.GetReviewById
 import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
-import com.example.domain.usecase.user.ApproveValidation
-import com.example.domain.usecase.user.SendValidation
-import com.example.domain.usecase.user.RegisterUser
-import com.example.domain.usecase.user.SetOrUpdateValidationCode
+import com.example.domain.usecase.user.*
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
@@ -69,9 +66,9 @@ val newsModule = module {
 
 val userModule = module {
 
+    factory { PasswordEncrypt() }
 
-
-    single<UserDao> { UserDaoImpl() }
+    single<UserDao> { UserDaoImpl(get()) }
 
     val session = Session.getInstance(EmailCredentials.props,
         EmailAuthenticator().invoke())
@@ -82,4 +79,5 @@ val userModule = module {
     single { SetOrUpdateValidationCode(get()) }
     single { SendValidation(get(), get(), get()) }
     single { ApproveValidation(get()) }
+    single { GetUserByEmail(get()) }
 }
