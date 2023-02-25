@@ -12,4 +12,5 @@ enum class Endpoint(val path: String) {
     REGISTER("/register"),
     VALIDATE("/validate"),
     SEND("/send"),
+    AUTHORIZE("authorize")
 }

@@ -58,6 +58,44 @@ class UserDaoImpl(
         }
     }
 
+    override suspend fun userEmailVerified(idUser: Int): ServiceResult<Boolean> {
+        return try {
+
+            dbQuery {
+                if (UserTable.select { (UserTable.id eq idUser) and
+                            (UserTable.emailVerified eq true) }.count() > 0)
+
+                        ServiceResult.Success(true)
+
+                else ServiceResult.Error(Errors.EMAIL_NOT_VERIFIED)
+            }
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
+    override suspend fun checkUserCredentials(
+        email: String,
+        password: String,
+    ): ServiceResult<User> {
+
+        return try {
+            dbQuery {
+                UserTable.select { (UserTable.email eq email) and
+                        (UserTable.password eq password)  }
+                    .singleOrNull()?.let {
+
+                        ServiceResult.Success(rowToUser(it))
+
+                    } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
+            }
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
     override suspend fun getUserByEmail(email: String):
             ServiceResult<User> {
         return try {

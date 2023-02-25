@@ -63,14 +63,6 @@ fun Application.configureSecurity() {
 
             }
         }
-
-        jwt("admin-auth") {
-            TODO()
-        }
-
-        jwt("god-auth") {
-            TODO()
-        }
     }
 
 }

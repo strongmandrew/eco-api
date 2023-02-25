@@ -1,9 +1,7 @@
 package com.example.routes
 
-import com.example.domain.usecase.user.ApproveValidation
-import com.example.domain.usecase.user.GetUserByEmail
-import com.example.domain.usecase.user.SendValidation
-import com.example.domain.usecase.user.RegisterUser
+import com.example.domain.usecase.user.*
+import com.example.entity.AuthUser
 import com.example.entity.User
 import com.example.entity.EmailCodeApprove
 import com.example.entity.EmailSend
@@ -20,6 +18,7 @@ fun Routing.userRoute() {
     val sendValidation: SendValidation by inject()
     val approveValidation: ApproveValidation by inject()
     val getUserByEmail: GetUserByEmail by inject()
+    val authorizeUser: AuthorizeUser by inject()
 
     route(Endpoint.USER.path) {
 
@@ -46,6 +45,24 @@ fun Routing.userRoute() {
 
 
             }
+        }
+
+        route(Endpoint.AUTHORIZE.path) {
+
+            post {
+
+                val user = call.receive<AuthUser>()
+
+                val response = authorizeUser(user.email, user
+                    .password)
+
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.fromValue(response.statusCode)
+                )
+
+            }
+
         }
 
         route(Endpoint.VALIDATE.path) {

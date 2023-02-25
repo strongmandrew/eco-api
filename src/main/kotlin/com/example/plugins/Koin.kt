@@ -82,4 +82,5 @@ val userModule = module {
     single { SendValidation(get(), get(), get()) }
     single { ApproveValidation(get()) }
     single { GetUserByEmail(get()) }
+    single { AuthorizeUser(get(), get(), get()) }
 }

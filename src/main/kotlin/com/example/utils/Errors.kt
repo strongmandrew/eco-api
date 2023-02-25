@@ -29,5 +29,9 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
         message = "Email service is temporally unavailable",
         statusCode = 500
     ),
+    EMAIL_NOT_VERIFIED(
+        message = "Verify your email first to authorize",
+        statusCode = 202
+    )
 
 }

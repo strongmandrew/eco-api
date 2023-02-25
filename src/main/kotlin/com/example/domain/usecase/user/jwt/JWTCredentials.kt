@@ -12,6 +12,4 @@ object JWTCredentials {
         System.getenv(JWT_SECRET)
     }
 
-
-
 }

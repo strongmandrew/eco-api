@@ -9,6 +9,7 @@ import com.example.utils.Const
 import com.example.utils.Const.DEFAULT_ID
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -29,106 +30,146 @@ fun Routing.recyclePointRoute() {
     val getReviewsByPointId: GetReviewsByPointId by inject()
     val insertReview: InsertReview by inject()
 
-    route(Endpoint.RECYCLE_POINT.path) {
 
-        route(Endpoint.PHOTO.path) {
-
-            static {
-                staticRootFolder = File(Const.PHOTO_PATH)
-                files(".")
-            }
-        }
-
-
-        get {
-            val response = getRecyclePoints()
-
-            call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
-
-        }
-
-        post {
-
-            val point = call.receive<RecyclePoint>()
-            val response = insertRecyclePoint(point)
-
-            call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
-
-        }
-
-        route("/{id}") {
-
-            patch(Endpoint.APPROVE.path) {
-
-                val id = call.parameters["id"]
-
-                val response = changeRecyclePointApproval(id?.toInt() ?: DEFAULT_ID)
-
-                call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
-
-            }
-
-            get {
-
-                val id = call.parameters["id"]
-
-                val response = getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
-                call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
-
-            }
-
-            delete {
-                val id = call.parameters["id"]
-                val response = deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
-
-                call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
-            }
+    authenticate("user-auth") {
+        route(Endpoint.RECYCLE_POINT.path) {
 
             route(Endpoint.PHOTO.path) {
 
-                patch {
-
-                    val id = call.parameters["id"]
-                    val extension = call.request
-                        .queryParameters["ext"]
-
-                    val channel = call.receiveChannel()
-
-                    val response = setRecyclePointPhoto(channel,
-                        extension ?: throw IllegalStateException(),
-                        id?.toInt() ?: DEFAULT_ID)
-
-                    call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
-
+                static {
+                    staticRootFolder = File(Const.PHOTO_PATH)
+                    files(".")
                 }
+            }
+
+
+            get {
+                val response = getRecyclePoints()
+
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.fromValue(response.statusCode)
+                )
 
             }
 
-            route(Endpoint.REVIEW.path) {
+            post {
+
+                val point = call.receive<RecyclePoint>()
+                val response = insertRecyclePoint(point)
+
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.fromValue(response.statusCode)
+                )
+
+            }
+
+            route("/{id}") {
+
+                patch(Endpoint.APPROVE.path) {
+
+                    val id = call.parameters["id"]
+
+                    val response = changeRecyclePointApproval(
+                        id?.toInt() ?: DEFAULT_ID
+                    )
+
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
+                    )
+
+                }
 
                 get {
 
                     val id = call.parameters["id"]
 
-                    val response = getReviewsByPointId(id?.toInt() ?: DEFAULT_ID)
-
-                    call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
+                    val response =
+                        getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
+                    )
 
                 }
 
-                post {
-
-                    val review = call.receive<Review>()
-
+                delete {
                     val id = call.parameters["id"]
+                    val response =
+                        deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
 
-                    val response = insertReview(review, id?.toInt() ?: DEFAULT_ID)
-                    call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
+                    )
                 }
 
-            }
-        }
+                route(Endpoint.PHOTO.path) {
 
+                    patch {
+
+                        val id = call.parameters["id"]
+                        val extension = call.request
+                            .queryParameters["ext"]
+
+                        val channel = call.receiveChannel()
+
+                        val response = setRecyclePointPhoto(
+                            channel,
+                            extension
+                                ?: throw IllegalStateException(),
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+
+                        call.respond(
+                            message = response,
+                            status = HttpStatusCode.fromValue(response.statusCode)
+                        )
+
+                    }
+
+                }
+
+                route(Endpoint.REVIEW.path) {
+
+                    get {
+
+                        val id = call.parameters["id"]
+
+                        val response = getReviewsByPointId(
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+
+                        call.respond(
+                            message = response,
+                            status = HttpStatusCode.fromValue(response.statusCode)
+                        )
+
+                    }
+
+                    post {
+
+                        val review = call.receive<Review>()
+
+                        val id = call.parameters["id"]
+
+                        val response = insertReview(
+                            review,
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+                        call.respond(
+                            message = response,
+                            status = HttpStatusCode.fromValue(response.statusCode)
+                        )
+                    }
+
+                }
+            }
+
+
+        }
 
     }
 
