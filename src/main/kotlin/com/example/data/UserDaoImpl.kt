@@ -39,6 +39,25 @@ class UserDaoImpl(
         }
     }
 
+    override suspend fun getUserById(userId: Int): ServiceResult<User> {
+        return try {
+
+            dbQuery {
+
+                UserTable.select { UserTable.id eq userId }
+                    .singleOrNull()?.let {
+
+                        ServiceResult.Success(rowToUser(it))
+
+                    } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
+            }
+
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
     override suspend fun getUserByEmail(email: String):
             ServiceResult<User> {
         return try {

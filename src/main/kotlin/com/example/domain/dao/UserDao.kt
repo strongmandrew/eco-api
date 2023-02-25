@@ -9,5 +9,6 @@ interface UserDao: UserRegistration, UserValidation {
 
     suspend fun getUserByEmail(email: String): ServiceResult<User>
     suspend fun emailDoesNotExist(email: String): ServiceResult<Boolean>
+    suspend fun getUserById(userId: Int): ServiceResult<User>
 
 }

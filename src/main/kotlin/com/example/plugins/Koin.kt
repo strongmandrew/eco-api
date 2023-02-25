@@ -19,6 +19,7 @@ import com.example.domain.usecase.review.GetReviewById
 import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
 import com.example.domain.usecase.user.*
+import com.example.domain.usecase.user.jwt.JWTHandler
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
@@ -73,6 +74,7 @@ val userModule = module {
     val session = Session.getInstance(EmailCredentials.props,
         EmailAuthenticator().invoke())
 
+    factory { JWTHandler() }
     factory { EmailService(session) }
     factory { CodeGenerator() }
     single { RegisterUser(get()) }
