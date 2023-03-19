@@ -9,6 +9,6 @@ interface RubbishTypeDao {
     suspend fun getRubbishTypeById(rubbishTypeId: Int): ServiceResult<RubbishType>
     suspend fun getRubbishTypeByName(rubbishType: String):
             ServiceResult<RubbishType>
-    suspend fun getTotalRubbishTypeTakeOff(rubbishType: String):
+    suspend fun getTotalRubbishTypeTakeOffById(rubbishTypeId: Int):
             ServiceResult<Double>
 }
