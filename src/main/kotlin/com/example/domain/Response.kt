@@ -1,6 +1,7 @@
 package com.example.domain
 
 import com.example.utils.DevOnly
+import com.example.utils.Errors
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,9 +21,12 @@ data class Response<out T>(
         }
     }
 }
-
-
-
-
 @Serializable
 data class ErrorResponse(val name: String, val description: String)
+
+val UNAUTHORIZEDResponse = Response<Boolean>(
+    error = ErrorResponse(
+        Errors.UNAUTHORIZED.name, Errors.UNAUTHORIZED.message
+    ),
+    statusCode = Errors.UNAUTHORIZED.statusCode
+)

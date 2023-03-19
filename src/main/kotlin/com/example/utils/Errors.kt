@@ -32,6 +32,10 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
     EMAIL_NOT_VERIFIED(
         message = "Verify your email first to authorize",
         statusCode = 202
+    ),
+    UNAUTHORIZED(
+        message = "Invalid user",
+        statusCode = 401
     )
 
 }

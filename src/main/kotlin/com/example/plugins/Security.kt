@@ -45,17 +45,15 @@ fun Application.configureSecurity() {
                 return@validate when (user) {
 
                     is ServiceResult.Success -> {
-                        if (userId == user.data.id && roleId ==
-                            Role.USER.id && user.data.timesChanged
-                            == timesChanged) {
-
+                        if (userId == user.data.id &&
+                            roleId == Role.USER.id &&
+                            user.data.timesChanged == timesChanged
+                            ) {
                             JWTPrincipal(it.payload)
-
                         }
                         else
                             null
                     }
-
                     is ServiceResult.Error -> {
                         null
                     }

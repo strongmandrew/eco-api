@@ -14,6 +14,7 @@ fun Application.module() {
 
     DatabaseFactory.init(dbConfig = MySqlConfig)
     configureSerialization()
+    configureStatusPages()
     configureSecurity()
     configureRouting()
     configureMonitoring()
