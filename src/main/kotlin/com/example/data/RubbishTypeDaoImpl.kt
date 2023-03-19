@@ -7,10 +7,7 @@ import com.example.domain.dao.RubbishTypeDao
 import com.example.entity.RubbishType
 import com.example.utils.Errors
 import com.example.utils.ServiceResult
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.sum
+import org.jetbrains.exposed.sql.*
 
 class RubbishTypeDaoImpl: RubbishTypeDao {
     override suspend fun insertRubbishType(rubbishType: RubbishType): ServiceResult<RubbishType> {
@@ -31,22 +28,9 @@ class RubbishTypeDaoImpl: RubbishTypeDao {
 
     override suspend fun getRubbishTypeById(rubbishTypeId: Int): ServiceResult<RubbishType> {
         return try {
-            RubbishTypeTable.select {
-                RubbishTypeTable.id eq rubbishTypeId
-            }.singleOrNull()?.let {
-                    ServiceResult.Success(rowToRubbishType(it))
-                } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
-        }
-        catch (e: Exception) {
-            ServiceResult.Error(Errors.DATABASE_ERROR)
-        }
-    }
-
-    override suspend fun getRubbishTypeByName(rubbishType: String): ServiceResult<RubbishType> {
-        return try {
             dbQuery {
                 RubbishTypeTable.select {
-                    RubbishTypeTable.type eq rubbishType
+                    RubbishTypeTable.id eq rubbishTypeId
                 }.singleOrNull()?.let {
                     ServiceResult.Success(rowToRubbishType(it))
                 } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
@@ -57,19 +41,29 @@ class RubbishTypeDaoImpl: RubbishTypeDao {
         }
     }
 
-    override suspend fun getTotalRubbishTypeTakeOffById
-                (rubbishTypeId: Int): ServiceResult<Double> {
+    override suspend fun getTotalRubbishTypeTakeOffByName
+                (rubbishType: String): ServiceResult<Double> {
         return try {
             dbQuery {
-                UserTakeOffTable.slice(UserTakeOffTable
+                UserTakeOffTable
+                    .join(
+                        otherTable = RubbishTypeTable,
+                        joinType = JoinType.INNER,
+                        onColumn = UserTakeOffTable.idRubbishType,
+                        otherColumn = RubbishTypeTable.id
+                    )
+                    .slice(UserTakeOffTable
                     .amountInGrams.sum())
-                    .select { UserTakeOffTable.idRubbishType eq rubbishTypeId }
+                    .select { RubbishTypeTable.type.lowerCase() eq
+                            rubbishType.lowercase() }
                     .singleOrNull()?.let {
-                        ServiceResult.Success(it[UserTakeOffTable.amountInGrams])
+                        ServiceResult.Success(it[UserTakeOffTable
+                            .amountInGrams.sum()] ?: 0.0)
                     } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
             }
         }
         catch (e: Exception) {
+            println(e.message)
             ServiceResult.Error(Errors.DATABASE_ERROR)
         }
     }

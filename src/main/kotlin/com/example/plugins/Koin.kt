@@ -1,13 +1,7 @@
 package com.example.plugins
 
-import com.example.data.NewsDaoImpl
-import com.example.data.RecyclePointDaoImpl
-import com.example.data.ReviewDaoImpl
-import com.example.data.UserDaoImpl
-import com.example.domain.dao.NewsDao
-import com.example.domain.dao.RecyclePointDao
-import com.example.domain.dao.ReviewDao
-import com.example.domain.dao.UserDao
+import com.example.data.*
+import com.example.domain.dao.*
 import com.example.domain.usecase.email.CodeGenerator
 import com.example.domain.usecase.email.EmailAuthenticator
 import com.example.domain.usecase.email.EmailCredentials
@@ -18,6 +12,9 @@ import com.example.domain.usecase.review.DeleteReviewById
 import com.example.domain.usecase.review.GetReviewById
 import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
+import com.example.domain.usecase.rubbishType.GetRubbishTypeById
+import com.example.domain.usecase.rubbishType.GetTotalRubbishTypeTakeOff
+import com.example.domain.usecase.rubbishType.InsertRubbishType
 import com.example.domain.usecase.user.*
 import com.example.domain.usecase.user.jwt.JWTHandler
 import io.ktor.server.application.*
@@ -31,7 +28,7 @@ fun Application.configureKoin() {
     install(Koin) {
         slf4jLogger()
         modules(listOf(recyclePointModule, reviewModule,
-            newsModule, userModule))
+            newsModule, userModule, rubbishTypeModule))
     }
 }
 
@@ -83,4 +80,11 @@ val userModule = module {
     single { ApproveValidation(get()) }
     single { GetUserByEmail(get()) }
     single { AuthorizeUser(get(), get(), get()) }
+}
+
+val rubbishTypeModule = module {
+    single<RubbishTypeDao> { RubbishTypeDaoImpl() }
+    single { GetRubbishTypeById(get()) }
+    single { InsertRubbishType(get()) }
+    single { GetTotalRubbishTypeTakeOff(get()) }
 }
