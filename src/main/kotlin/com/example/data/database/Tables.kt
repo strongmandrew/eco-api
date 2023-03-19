@@ -73,6 +73,16 @@ object ReviewTable: IntIdTable("review") {
     var recyclePoint = reference("recycle_point_id", RecyclePointTable.id)
 }
 
+object UserTakeOffTable: IntIdTable("user_rubbish_take_off") {
+    val idUser = reference("idUser", UserTable.id)
+    val idRecyclePoint = reference("idRecycle_point",
+        RecyclePointTable.id)
+    val idRubbishType = reference("idRubbish_type", RubbishTypeTable.id)
+    val amountInGrams = double("amount_in_grams")
+    val datetime = datetime("datetime").clientDefault {
+        LocalDateTime.now() }
+}
+
 object RubbishTypeTable: IntIdTable("rubbish_type") {
     val type = varchar("type", 45)
     val description = varchar("description", 256).nullable()

@@ -7,4 +7,8 @@ interface RubbishTypeDao {
 
     suspend fun insertRubbishType(rubbishType: RubbishType): ServiceResult<RubbishType>
     suspend fun getRubbishTypeById(rubbishTypeId: Int): ServiceResult<RubbishType>
+    suspend fun getRubbishTypeByName(rubbishType: String):
+            ServiceResult<RubbishType>
+    suspend fun getTotalRubbishTypeTakeOff(rubbishType: String):
+            ServiceResult<Double>
 }
