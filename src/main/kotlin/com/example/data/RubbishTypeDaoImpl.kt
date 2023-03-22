@@ -8,6 +8,7 @@ import com.example.entity.RubbishType
 import com.example.utils.Errors
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class RubbishTypeDaoImpl: RubbishTypeDao {
     override suspend fun insertRubbishType(rubbishType: RubbishType): ServiceResult<RubbishType> {
@@ -64,6 +65,22 @@ class RubbishTypeDaoImpl: RubbishTypeDao {
         }
         catch (e: Exception) {
             println(e.message)
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
+    override suspend fun deleteRubbishTypeById(rubbishTypeId: Int): ServiceResult<Boolean> {
+        return try {
+            dbQuery {
+                if (RubbishTypeTable.deleteWhere {
+                    this.id eq rubbishTypeId
+                } > 0)
+                    ServiceResult.Success(true)
+                else
+                    ServiceResult.Error(Errors.ID_NOT_FOUND)
+            }
+        }
+        catch (e: Exception) {
             ServiceResult.Error(Errors.DATABASE_ERROR)
         }
     }

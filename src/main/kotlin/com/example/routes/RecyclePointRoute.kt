@@ -18,7 +18,7 @@ import org.koin.ktor.ext.inject
 import java.io.File
 import java.lang.IllegalStateException
 
-fun Routing.recyclePointRoute() {
+fun Route.recyclePointRoute() {
 
     val getRecyclePoints: GetRecyclePoints by inject()
     val getRecyclePointById: GetRecyclePointById by inject()

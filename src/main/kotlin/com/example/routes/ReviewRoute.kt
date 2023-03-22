@@ -9,7 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-fun Routing.reviewRoute() {
+fun Route.reviewRoute() {
 
     val getReviewById: GetReviewById by inject()
     val deleteReviewById: DeleteReviewById by inject()

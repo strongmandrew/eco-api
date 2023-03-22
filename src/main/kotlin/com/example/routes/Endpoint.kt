@@ -2,6 +2,7 @@ package com.example.routes
 
 enum class Endpoint(val path: String) {
     HOME(path = "/"),
+    API("/api"),
     RECYCLE_POINT(path = "/recycle_point"),
     REVIEW(path = "/review"),
     RUBBISH_TYPE(path = "/rubbish_type"),
@@ -12,5 +13,7 @@ enum class Endpoint(val path: String) {
     REGISTER("/register"),
     VALIDATE("/validate"),
     SEND("/send"),
-    AUTHORIZE("authorize")
+    AUTHORIZE("authorize"),
+    TAKE_OFF("/take_off"),
+    TOTAL("/total")
 }

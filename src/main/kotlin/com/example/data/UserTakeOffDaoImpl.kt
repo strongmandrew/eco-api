@@ -18,7 +18,7 @@ class UserTakeOffDaoImpl : UserTakeOffDao {
                 UserTakeOffTable.insert {
                     it[this.idUser] = takeOff.idUser
                     it[this.idRecyclePoint] = takeOff.idRecyclePoint
-                    it[this.idRubbishType] = takeOff.idRecyclePoint
+                    it[this.idRubbishType] = takeOff.idRubbishType
                     it[this.amountInGrams] = takeOff.amountInGrams
                 }.resultedValues?.singleOrNull()?.let {
                     ServiceResult.Success(rowToUserTakeOff(it))
@@ -36,10 +36,12 @@ class UserTakeOffDaoImpl : UserTakeOffDao {
                     .slice(UserTakeOffTable.amountInGrams.sum())
                     .select { UserTakeOffTable.idUser eq idUser }
                     .singleOrNull()?.let {
-                        ServiceResult.Success(it[UserTakeOffTable.amountInGrams])
+                        ServiceResult.Success(it[UserTakeOffTable
+                            .amountInGrams.sum()] ?: 0.0)
                     } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
             }
         } catch (e: Exception) {
+            println(e.message)
             ServiceResult.Error(Errors.DATABASE_ERROR)
         }
     }
@@ -96,7 +98,8 @@ class UserTakeOffDaoImpl : UserTakeOffDao {
             idRecyclePoint = row[UserTakeOffTable.idRecyclePoint]
                 .value,
             idRubbishType = row[UserTakeOffTable.idRubbishType].value,
-            amountInGrams = row[UserTakeOffTable.amountInGrams]
+            amountInGrams = row[UserTakeOffTable.amountInGrams],
+            datetime = row[UserTakeOffTable.datetime].toString()
         )
     }
 }

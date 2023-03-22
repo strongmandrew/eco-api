@@ -12,11 +12,13 @@ import com.example.domain.usecase.review.DeleteReviewById
 import com.example.domain.usecase.review.GetReviewById
 import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
+import com.example.domain.usecase.rubbishType.DeleteRubbishTypeById
 import com.example.domain.usecase.rubbishType.GetRubbishTypeById
 import com.example.domain.usecase.rubbishType.GetTotalRubbishTypeTakeOff
 import com.example.domain.usecase.rubbishType.InsertRubbishType
 import com.example.domain.usecase.user.*
 import com.example.domain.usecase.user.jwt.JWTHandler
+import com.example.domain.usecase.userTakeOff.*
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
@@ -28,7 +30,7 @@ fun Application.configureKoin() {
     install(Koin) {
         slf4jLogger()
         modules(listOf(recyclePointModule, reviewModule,
-            newsModule, userModule, rubbishTypeModule))
+            newsModule, userModule, rubbishTypeModule, userTakeOffModule))
     }
 }
 
@@ -87,4 +89,14 @@ val rubbishTypeModule = module {
     single { GetRubbishTypeById(get()) }
     single { InsertRubbishType(get()) }
     single { GetTotalRubbishTypeTakeOff(get()) }
+    single { DeleteRubbishTypeById(get()) }
+}
+
+val userTakeOffModule = module {
+    single<UserTakeOffDao> { UserTakeOffDaoImpl() }
+    single { GetTotalUserTakeOff(get()) }
+    single { GetTakeOffById(get()) }
+    single { TakeOffRubbish(get()) }
+    single { GetAllUserTakeOffs(get()) }
+    single { DeleteTakeOffById(get()) }
 }

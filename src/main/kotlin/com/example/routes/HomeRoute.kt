@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.homeRoute() {
+fun Route.homeRoute() {
 
 
     get(Endpoint.HOME.path) {

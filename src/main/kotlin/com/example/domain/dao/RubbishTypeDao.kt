@@ -9,4 +9,6 @@ interface RubbishTypeDao {
     suspend fun getRubbishTypeById(rubbishTypeId: Int): ServiceResult<RubbishType>
     suspend fun getTotalRubbishTypeTakeOffByName(rubbishType: String):
             ServiceResult<Double>
+    suspend fun deleteRubbishTypeById(rubbishTypeId: Int):
+            ServiceResult<Boolean>
 }

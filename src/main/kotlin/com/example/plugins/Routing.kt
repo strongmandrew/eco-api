@@ -7,12 +7,15 @@ import io.ktor.server.routing.*
 fun Application.configureRouting() {
 
     routing {
-        homeRoute()
-        userRoute()
-        newsRoute()
-        recyclePointRoute()
-        reviewRoute()
-        rubbishTypeRoute()
+        route(Endpoint.API.path) {
+            homeRoute()
+            userRoute()
+            newsRoute()
+            recyclePointRoute()
+            reviewRoute()
+            rubbishTypeRoute()
+            userTakeOffRoute()
+        }
     }
 
 }

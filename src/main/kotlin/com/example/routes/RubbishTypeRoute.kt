@@ -1,5 +1,6 @@
 package com.example.routes
 
+import com.example.domain.usecase.rubbishType.DeleteRubbishTypeById
 import com.example.domain.usecase.rubbishType.GetRubbishTypeById
 import com.example.domain.usecase.rubbishType.GetTotalRubbishTypeTakeOff
 import com.example.domain.usecase.rubbishType.InsertRubbishType
@@ -12,11 +13,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-fun Routing.rubbishTypeRoute() {
+fun Route.rubbishTypeRoute() {
 
     val getRubbishTypeById: GetRubbishTypeById by inject()
     val getTotalRubbishTypeTakeOff: GetTotalRubbishTypeTakeOff by inject()
     val insertRubbishType: InsertRubbishType by inject()
+    val deleteRubbishTypeById: DeleteRubbishTypeById by inject()
 
     route(Endpoint.RUBBISH_TYPE.path) {
 
@@ -42,6 +44,16 @@ fun Routing.rubbishTypeRoute() {
         post {
             val rubbishType = call.receive<RubbishType>()
             val response = insertRubbishType(rubbishType)
+            call.respond(
+                message = response,
+                status = HttpStatusCode.fromValue(response.statusCode)
+            )
+        }
+
+        delete("/{id}") {
+            val id = call.parameters["id"]
+            val response = deleteRubbishTypeById(id?.toInt() ?:
+            DEFAULT_ID)
             call.respond(
                 message = response,
                 status = HttpStatusCode.fromValue(response.statusCode)
