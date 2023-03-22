@@ -3,7 +3,8 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
+
 import java.io.File
 import kotlin.test.assertEquals
 internal class RecyclePointRouteTest {

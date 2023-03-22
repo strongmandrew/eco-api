@@ -13,6 +13,10 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
 group = "com.example"
 version = "0.0.1"
 application {
@@ -56,12 +60,12 @@ dependencies {
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-ktor:$koinKtorVersion")
     implementation("io.insert-koin:koin-logger-slf4j:$koinKtorVersion")
-    implementation("junit:junit:4.13.2")
     implementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+
+    implementation("io.ktor:ktor-client-content-negotiation" +
+            ":$ktorVersion")
 }

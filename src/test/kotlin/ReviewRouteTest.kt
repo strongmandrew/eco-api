@@ -1,7 +1,8 @@
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
+
 import kotlin.test.assertEquals
 
 internal class ReviewRouteTest {
@@ -14,7 +15,7 @@ internal class ReviewRouteTest {
     @Test
     fun testGetReviewByIdSuccess() = testApplication {
 
-        val response = client.get("/review/$CORRECT_ID")
+        val response = client.get("$API_ROUTE/review/$CORRECT_ID")
         assertEquals(HttpStatusCode.OK, response.status)
 
     }
@@ -22,7 +23,7 @@ internal class ReviewRouteTest {
     @Test
     fun testGetReviewByIdFailed() = testApplication {
 
-        val response = client.get("/review/$INCORRECT_ID")
+        val response = client.get("$API_ROUTE/review/$INCORRECT_ID")
         assertEquals(HttpStatusCode.Accepted, response.status)
     }
 
