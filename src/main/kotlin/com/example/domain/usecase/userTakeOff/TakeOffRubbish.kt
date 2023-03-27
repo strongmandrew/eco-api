@@ -17,7 +17,7 @@ class TakeOffRubbish(
             is ServiceResult.Success -> {
                 Response(
                     data = rubbish.data,
-                    statusCode = 200
+                    statusCode = 201
                 )
             }
             is ServiceResult.Error -> {

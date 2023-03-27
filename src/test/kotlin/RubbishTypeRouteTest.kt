@@ -10,7 +10,6 @@ import io.ktor.http.ContentType.Application.Json
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -32,20 +31,10 @@ internal class RubbishTypeRouteTest {
         val RUBBISH_ROUTE = Endpoint.RUBBISH_TYPE.path
     }
 
-    private val ApplicationTestBuilder.provideClient: HttpClient
-        get() = createClient {
-            install(ContentNegotiation) {
-                json(Json{
-                    encodeDefaults = false
-                    prettyPrint = true
-                })
-            }
-        }
-
 
     @Test
     @BeforeAll
-    @DisplayName("Проверка добавления нового типа мусора")
+    @DisplayName("Posting new rubbish type")
     fun postRubbishType() = testApplication {
         assertDoesNotThrow {
             val response =
@@ -63,7 +52,7 @@ internal class RubbishTypeRouteTest {
     }
 
     @Test
-    @DisplayName("Получение типа мусора по id")
+    @DisplayName("Getting rubbish type by id")
     fun getRubbishTypeById() = testApplication {
         assertDoesNotThrow {
             val response = provideClient
@@ -77,7 +66,7 @@ internal class RubbishTypeRouteTest {
     }
 
     @Test
-    @DisplayName("Получение кол-ва всего мусора заданного типа")
+    @DisplayName("Get the amount of given rubbish type taken off")
     fun getTotalOfRubbishType() = testApplication {
         assertDoesNotThrow {
             val response =
@@ -95,7 +84,7 @@ internal class RubbishTypeRouteTest {
 
     @Test
     @AfterAll
-    @DisplayName("Удаление типа мусора по id")
+    @DisplayName("Deleting rubbish type by id")
     fun deleteRubbishType() = testApplication {
         assertDoesNotThrow {
             val response = provideClient
