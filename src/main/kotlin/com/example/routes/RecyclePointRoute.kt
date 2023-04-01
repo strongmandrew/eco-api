@@ -26,10 +26,10 @@ fun Route.recyclePointRoute() {
     val changeRecyclePointApproval: ChangeRecyclePointApproval by inject()
     val insertRecyclePoint: InsertRecyclePoint by inject()
     val deleteRecyclePoint: DeleteRecyclePoint by inject()
+    val getRecyclePointByQuery: GetRecyclePointByQuery by inject()
 
     val getReviewsByPointId: GetReviewsByPointId by inject()
     val insertReview: InsertReview by inject()
-
 
     authenticate("user-auth") {
         route(Endpoint.RECYCLE_POINT.path) {
@@ -44,6 +44,18 @@ fun Route.recyclePointRoute() {
 
 
             get {
+
+                val query = call.request.queryParameters["query"]
+
+                query?.let {
+                    val response = getRecyclePointByQuery(it)
+
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
+                    )
+                    return@get
+                }
                 val response = getRecyclePoints()
 
                 call.respond(

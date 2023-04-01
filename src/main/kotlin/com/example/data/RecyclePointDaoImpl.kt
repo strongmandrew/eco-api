@@ -87,6 +87,26 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
+    override suspend fun getPointByQuery(query: String): ServiceResult<RecyclePoint> {
+        return try {
+            dbQuery {
+                (RecyclePointTable innerJoin RecyclePointTypeTable).select {
+                    concat(separator = ",",
+                        expr = listOf(RecyclePointTable.streetName.lowerCase(),
+                        RecyclePointTable.streetHouseNum)
+                    ) like query.lowercase().plus("%")
+                }.singleOrNull()?.let {
+                    ServiceResult.Success(rowToRecyclePoint(it))
+
+                } ?: ServiceResult.Error(Errors.EMPTY_DATA)
+            }
+        }
+        catch (e: Exception) {
+            println(e.message)
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
     override suspend fun suchPointDoesNotExist(recyclePoint: RecyclePoint):
             ServiceResult<Boolean> {
 

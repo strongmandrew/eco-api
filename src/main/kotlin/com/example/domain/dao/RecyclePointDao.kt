@@ -7,6 +7,7 @@ import io.ktor.utils.io.*
 interface RecyclePointDao {
     suspend fun getPoints(): ServiceResult<List<RecyclePoint>>
     suspend fun getPointById(id: Int): ServiceResult<RecyclePoint>
+    suspend fun getPointByQuery(query: String): ServiceResult<RecyclePoint>
     suspend fun suchPointDoesNotExist(recyclePoint: RecyclePoint): ServiceResult<Boolean>
     suspend fun uploadMultipartPhoto(photoBytes: ByteArray, photoName: String): ServiceResult<Boolean>
     suspend fun uploadChannelPhoto(photoChannel: ByteReadChannel, photoName: String):
