@@ -36,6 +36,10 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
     UNAUTHORIZED(
         message = "Invalid user",
         statusCode = 401
+    ),
+    BAD_INPUT(
+        message = "Make sure your inputs and field names are correct",
+        statusCode = 400
     )
 
 }

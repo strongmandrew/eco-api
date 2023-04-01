@@ -30,3 +30,10 @@ val UNAUTHORIZEDResponse = Response<Boolean>(
     ),
     statusCode = Errors.UNAUTHORIZED.statusCode
 )
+
+val BADREQUESTResponse = Response<Boolean>(
+    error = ErrorResponse(
+        Errors.BAD_INPUT.name, Errors.BAD_INPUT.message
+    ),
+    statusCode = Errors.BAD_INPUT.statusCode
+)
