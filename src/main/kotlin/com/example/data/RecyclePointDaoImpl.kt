@@ -29,8 +29,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.longitude,
                     RecyclePointTable.streetName,
                     RecyclePointTable.streetHouseNum,
-                    RecyclePointTable.startWorking,
-                    RecyclePointTable.endWorking,
+                    RecyclePointTable.weekSchedule,
                     RecyclePointTable.description,
                     RecyclePointTable.photoPath,
                     RecyclePointTable.totalRating,
@@ -69,8 +68,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.longitude,
                     RecyclePointTable.streetName,
                     RecyclePointTable.streetHouseNum,
-                    RecyclePointTable.startWorking,
-                    RecyclePointTable.endWorking,
+                    RecyclePointTable.weekSchedule,
                     RecyclePointTable.description,
                     RecyclePointTable.photoPath,
                     RecyclePointTable.totalRating,
@@ -150,10 +148,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
                             it[longitude] = point.longitude
                             it[streetName] = point.streetName
                             it[streetHouseNum] = point.streetHouseNum
-                            it[startWorking] =
-                                point.startWorking.toDatabaseTime()
-                            it[endWorking] =
-                                point.endWorking.toDatabaseTime()
+                            it[weekSchedule] = point.weekSchedule
                             it[description] =
                                 point.locationDescription
                             it[type] = typeId.data
@@ -280,8 +275,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
             longitude = row[RecyclePointTable.longitude],
             streetName = row[RecyclePointTable.streetName],
             streetHouseNum = row[RecyclePointTable.streetHouseNum],
-            startWorking = row[RecyclePointTable.startWorking].toString(),
-            endWorking = row[RecyclePointTable.endWorking].toString(),
+            weekSchedule = row[RecyclePointTable.weekSchedule],
             locationDescription = row[RecyclePointTable.description],
             photoPath = row[RecyclePointTable.photoPath],
             totalRating = row[RecyclePointTable.totalRating],

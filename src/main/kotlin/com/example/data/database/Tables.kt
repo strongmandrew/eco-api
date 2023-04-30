@@ -4,7 +4,6 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
-import org.jetbrains.exposed.sql.javatime.time
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -48,8 +47,7 @@ object RecyclePointTable: IntIdTable("recycle_point") {
     val longitude = double("longitude")
     val streetName = varchar("street_name", 45)
     val streetHouseNum = varchar("street_house_num", 8)
-    val startWorking = time("start_working")
-    val endWorking = time("end_working")
+    val weekSchedule = varchar("week_schedule", 100)
     val description = varchar("location_description", 256).nullable()
     val photoPath = varchar("photo_path", 128).nullable()
     val totalRating = double("total_rating").default(0.0)
