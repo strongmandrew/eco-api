@@ -7,16 +7,14 @@ import com.example.entity.RecyclePoint
 import com.example.entity.Review
 import com.example.utils.Const
 import com.example.utils.Const.DEFAULT_ID
-import io.ktor.http.*
+import com.example.utils.respondWithCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import java.io.File
-import java.lang.IllegalStateException
 
 fun Route.recyclePointRoute() {
 
@@ -48,32 +46,24 @@ fun Route.recyclePointRoute() {
                 val query = call.request.queryParameters["query"]
 
                 query?.let {
-                    val response = getRecyclePointByQuery(it)
-
-                    call.respond(
-                        message = response,
-                        status = HttpStatusCode.fromValue(response.statusCode)
-                    )
+                    call.respondWithCode {
+                        getRecyclePointByQuery(it)
+                    }
                     return@get
                 }
-                val response = getRecyclePoints()
 
-                call.respond(
-                    message = response,
-                    status = HttpStatusCode.fromValue(response.statusCode)
-                )
+                call.respondWithCode {
+                    getRecyclePoints()
+                }
 
             }
 
             post {
 
                 val point = call.receive<RecyclePoint>()
-                val response = insertRecyclePoint(point)
-
-                call.respond(
-                    message = response,
-                    status = HttpStatusCode.fromValue(response.statusCode)
-                )
+                call.respondWithCode {
+                    insertRecyclePoint(point)
+                }
 
             }
 
@@ -82,40 +72,27 @@ fun Route.recyclePointRoute() {
                 patch(Endpoint.APPROVE.path) {
 
                     val id = call.parameters["id"]
-
-                    val response = changeRecyclePointApproval(
-                        id?.toInt() ?: DEFAULT_ID
-                    )
-
-                    call.respond(
-                        message = response,
-                        status = HttpStatusCode.fromValue(response.statusCode)
-                    )
-
+                    call.respondWithCode {
+                        changeRecyclePointApproval(
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+                    }
                 }
 
                 get {
 
                     val id = call.parameters["id"]
 
-                    val response =
+                    call.respondWithCode {
                         getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
-                    call.respond(
-                        message = response,
-                        status = HttpStatusCode.fromValue(response.statusCode)
-                    )
-
+                    }
                 }
 
                 delete {
                     val id = call.parameters["id"]
-                    val response =
+                    call.respondWithCode {
                         deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
-
-                    call.respond(
-                        message = response,
-                        status = HttpStatusCode.fromValue(response.statusCode)
-                    )
+                    }
                 }
 
                 route(Endpoint.PHOTO.path) {
@@ -128,18 +105,14 @@ fun Route.recyclePointRoute() {
 
                         val channel = call.receiveChannel()
 
-                        val response = setRecyclePointPhoto(
-                            channel,
-                            extension
-                                ?: throw IllegalStateException(),
-                            id?.toInt() ?: DEFAULT_ID
-                        )
-
-                        call.respond(
-                            message = response,
-                            status = HttpStatusCode.fromValue(response.statusCode)
-                        )
-
+                        call.respondWithCode {
+                            setRecyclePointPhoto(
+                                channel,
+                                extension
+                                    ?: throw IllegalStateException(),
+                                id?.toInt() ?: DEFAULT_ID
+                            )
+                        }
                     }
 
                 }
@@ -150,15 +123,11 @@ fun Route.recyclePointRoute() {
 
                         val id = call.parameters["id"]
 
-                        val response = getReviewsByPointId(
-                            id?.toInt() ?: DEFAULT_ID
-                        )
-
-                        call.respond(
-                            message = response,
-                            status = HttpStatusCode.fromValue(response.statusCode)
-                        )
-
+                        call.respondWithCode {
+                            getReviewsByPointId(
+                                id?.toInt() ?: DEFAULT_ID
+                            )
+                        }
                     }
 
                     post {
@@ -167,14 +136,12 @@ fun Route.recyclePointRoute() {
 
                         val id = call.parameters["id"]
 
-                        val response = insertReview(
-                            review,
-                            id?.toInt() ?: DEFAULT_ID
-                        )
-                        call.respond(
-                            message = response,
-                            status = HttpStatusCode.fromValue(response.statusCode)
-                        )
+                        call.respondWithCode {
+                            insertReview(
+                                review,
+                                id?.toInt() ?: DEFAULT_ID
+                            )
+                        }
                     }
 
                 }

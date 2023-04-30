@@ -1,9 +1,8 @@
 package com.example.routes
 
 import com.example.domain.usecase.news.GetNews
-import io.ktor.http.*
+import com.example.utils.respondWithCode
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
@@ -15,11 +14,9 @@ fun Route.newsRoute() {
 
         get {
 
-            val response = getNews()
-
-            call.respond(message = response, status = HttpStatusCode.fromValue(response.statusCode))
-
-
+            call.respondWithCode {
+                getNews()
+            }
         }
 
     }

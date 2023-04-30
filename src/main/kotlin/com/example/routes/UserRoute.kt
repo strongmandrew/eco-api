@@ -4,14 +4,13 @@ import com.example.domain.usecase.user.*
 import com.example.domain.usecase.userTakeOff.GetAllUserTakeOffs
 import com.example.domain.usecase.userTakeOff.GetTotalUserTakeOff
 import com.example.entity.AuthUser
-import com.example.entity.User
 import com.example.entity.EmailCodeApprove
 import com.example.entity.EmailSend
+import com.example.entity.User
 import com.example.utils.Const.DEFAULT_ID
-import io.ktor.http.*
+import com.example.utils.respondWithCode
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
@@ -32,10 +31,9 @@ fun Route.userRoute() {
 
             val email = call.request.queryParameters["email"]
 
-            val response = getUserByEmail(email ?: "")
-
-            call.respond(message = response, status =
-            HttpStatusCode.fromValue(response.statusCode))
+            call.respondWithCode {
+                getUserByEmail(email ?: "")
+            }
         }
 
         route(Endpoint.REGISTER.path) {
@@ -44,12 +42,9 @@ fun Route.userRoute() {
 
                 val user = call.receive<User>()
 
-                val response = registerUser(user)
-
-                call.respond(message = response, status =
-                HttpStatusCode.fromValue(response.statusCode))
-
-
+                call.respondWithCode {
+                    registerUser(user)
+                }
             }
         }
 
@@ -59,14 +54,12 @@ fun Route.userRoute() {
 
                 val user = call.receive<AuthUser>()
 
-                val response = authorizeUser(user.email, user
-                    .password)
-
-                call.respond(
-                    message = response,
-                    status = HttpStatusCode.fromValue(response.statusCode)
-                )
-
+                call.respondWithCode {
+                    authorizeUser(
+                        user.email, user
+                            .password
+                    )
+                }
             }
 
         }
@@ -77,24 +70,16 @@ fun Route.userRoute() {
 
                 get {
                     val id = call.parameters["id"]
-                    val response =
+                    call.respondWithCode {
                         getAllUserTakeOffs(id?.toInt() ?: DEFAULT_ID)
-                    call.respond(
-                        message = response,
-                        status = HttpStatusCode
-                            .fromValue(response.statusCode)
-                    )
+                    }
                 }
 
                 get(Endpoint.TOTAL.path) {
                     val id = call.parameters["id"]
-                    val response =
+                    call.respondWithCode {
                         getTotalUserTakeOff(id?.toInt() ?: DEFAULT_ID)
-                    call.respond(
-                        message = response,
-                        status = HttpStatusCode
-                            .fromValue(response.statusCode)
-                    )
+                    }
                 }
             }
         }
@@ -107,15 +92,9 @@ fun Route.userRoute() {
 
                     val validateEmail = call.receive<EmailSend>()
 
-                    val response =
+                    call.respondWithCode {
                         sendValidation(validateEmail.email)
-
-                    call.respond(
-                        message = response, status =
-                        HttpStatusCode.fromValue
-                            (response.statusCode)
-                    )
-
+                    }
                 }
             }
 
@@ -126,15 +105,12 @@ fun Route.userRoute() {
                     val compareEmailCode = call
                         .receive<EmailCodeApprove>()
 
-                    val response = approveValidation(
-                        compareEmailCode.email,
-                        compareEmailCode.code
-                    )
-
-                    call.respond(message = response, status =
-                    HttpStatusCode.fromValue(
-                        response.statusCode
-                    ))
+                    call.respondWithCode {
+                        approveValidation(
+                            compareEmailCode.email,
+                            compareEmailCode.code
+                        )
+                    }
                 }
             }
 

@@ -143,7 +143,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
 
         return try {
 
-            when (val typeId = getRecyclePointIdByType(point.type)) {
+            when (val typeId = getRecyclePointIdByType(point.type!!)) {
                 is ServiceResult.Success -> {
 
                     dbQuery {
@@ -289,7 +289,6 @@ class RecyclePointDaoImpl: RecyclePointDao {
             totalRating = row[RecyclePointTable.totalRating],
             totalReviews = row[RecyclePointTable.totalReviews],
             approved = row[RecyclePointTable.approved],
-            type = row[RecyclePointTypeTable.type],
         )
     }
 
