@@ -7,11 +7,12 @@ import com.example.entity.RecyclePoint
 import com.example.entity.Review
 import com.example.utils.Const
 import com.example.utils.Const.DEFAULT_ID
-import com.example.utils.respondWithCode
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import java.io.File
@@ -46,24 +47,30 @@ fun Route.recyclePointRoute() {
                 val query = call.request.queryParameters["query"]
 
                 query?.let {
-                    call.respondWithCode {
-                        getRecyclePointByQuery(it)
-                    }
+                    val result = getRecyclePointByQuery(it)
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.fromValue(result.statusCode)
+                    )
                     return@get
                 }
 
-                call.respondWithCode {
-                    getRecyclePoints()
-                }
+                val result = getRecyclePoints()
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.fromValue(result.statusCode)
+                )
 
             }
 
             post {
 
                 val point = call.receive<RecyclePoint>()
-                call.respondWithCode {
-                    insertRecyclePoint(point)
-                }
+                val result = insertRecyclePoint(point)
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.fromValue(result.statusCode)
+                )
 
             }
 
@@ -72,27 +79,32 @@ fun Route.recyclePointRoute() {
                 patch(Endpoint.APPROVE.path) {
 
                     val id = call.parameters["id"]
-                    call.respondWithCode {
-                        changeRecyclePointApproval(
-                            id?.toInt() ?: DEFAULT_ID
-                        )
-                    }
+                    val result = changeRecyclePointApproval(
+                        id?.toInt() ?: DEFAULT_ID
+                    )
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.fromValue(result.statusCode)
+                    )
                 }
 
                 get {
 
                     val id = call.parameters["id"]
-
-                    call.respondWithCode {
-                        getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
-                    }
+                    val result = getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.fromValue(result.statusCode)
+                    )
                 }
 
                 delete {
                     val id = call.parameters["id"]
-                    call.respondWithCode {
-                        deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
-                    }
+                    val result = deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.fromValue(result.statusCode)
+                    )
                 }
 
                 route(Endpoint.PHOTO.path) {
@@ -105,14 +117,16 @@ fun Route.recyclePointRoute() {
 
                         val channel = call.receiveChannel()
 
-                        call.respondWithCode {
-                            setRecyclePointPhoto(
-                                channel,
-                                extension
-                                    ?: throw IllegalStateException(),
-                                id?.toInt() ?: DEFAULT_ID
-                            )
-                        }
+                        val result = setRecyclePointPhoto(
+                            channel,
+                            extension
+                                ?: throw IllegalStateException(),
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
                     }
 
                 }
@@ -123,11 +137,13 @@ fun Route.recyclePointRoute() {
 
                         val id = call.parameters["id"]
 
-                        call.respondWithCode {
-                            getReviewsByPointId(
-                                id?.toInt() ?: DEFAULT_ID
-                            )
-                        }
+                        val result = getReviewsByPointId(
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
                     }
 
                     post {
@@ -135,22 +151,17 @@ fun Route.recyclePointRoute() {
                         val review = call.receive<Review>()
 
                         val id = call.parameters["id"]
-
-                        call.respondWithCode {
-                            insertReview(
-                                review,
-                                id?.toInt() ?: DEFAULT_ID
-                            )
-                        }
+                        val result = insertReview(
+                            review,
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
                     }
-
                 }
             }
-
-
         }
-
     }
-
-
 }

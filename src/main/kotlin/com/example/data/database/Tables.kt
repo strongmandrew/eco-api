@@ -52,8 +52,7 @@ object RecyclePointTable: IntIdTable("recycle_point") {
     val endWorking = time("end_working")
     val description = varchar("location_description", 256).nullable()
     val photoPath = varchar("photo_path", 128).nullable()
-    val totalRating = integer("total_rating").default(0)
-    val totalReviews = integer("total_reviews").default(0)
+    val totalRating = double("total_rating").default(0.0)
     val approved = bool("approved").default(false)
     val type = reference("type_id", RecyclePointTypeTable.id)
 }
@@ -67,9 +66,6 @@ object RecyclePointTypeTable: IntIdTable("recycle_point_type") {
 object ReviewTable: IntIdTable("review") {
     val review = varchar("review", 512)
     val dateCreated = datetime("date_of").clientDefault { LocalDateTime.now() }
-    val rating = integer("rating").check("rating_range") {
-        (it greater 0) and (it less 6)
-    }
     var recyclePoint = reference("recycle_point_id", RecyclePointTable.id)
 }
 
@@ -81,6 +77,9 @@ object UserTakeOffTable: IntIdTable("user_rubbish_take_off") {
     val amountInGrams = double("amount_in_grams")
     val datetime = datetime("datetime").clientDefault {
         LocalDateTime.now() }
+    val percentRating = integer("percentRating").check {
+        (it greaterEq 0) and (it lessEq 100)
+    }
 }
 
 object RubbishTypeTable: IntIdTable("rubbish_type") {

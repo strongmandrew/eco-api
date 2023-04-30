@@ -21,7 +21,7 @@ class ReviewDaoImpl: ReviewDao {
                     onColumn = ReviewTable.recyclePoint,
                     otherColumn = RecyclePointTable.id
                 ).slice(
-                    ReviewTable.id, ReviewTable.review, ReviewTable.dateCreated, ReviewTable.rating
+                    ReviewTable.id, ReviewTable.review, ReviewTable.dateCreated
                 ).select { ReviewTable.recyclePoint eq id }.toList().map { rowToReview(it) }
             }
 
@@ -66,7 +66,6 @@ class ReviewDaoImpl: ReviewDao {
             dbQuery {
                 ReviewTable.insert {
                     it[ReviewTable.review] = review.reviewText
-                    it[rating] = review.rating
                     it[recyclePoint] = idPoint
                 }.resultedValues?.singleOrNull()?.let {
                     ServiceResult.Success(rowToReview(it))
@@ -84,7 +83,6 @@ class ReviewDaoImpl: ReviewDao {
             id = row[ReviewTable.id].value,
             reviewText = row[ReviewTable.review],
             dateOf = row[ReviewTable.dateCreated].toString(),
-            rating = row[ReviewTable.rating],
         )
     }
 }

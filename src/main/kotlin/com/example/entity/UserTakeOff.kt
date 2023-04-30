@@ -9,5 +9,6 @@ data class UserTakeOff(
     val idRecyclePoint: Int,
     val idRubbishType: Int,
     val amountInGrams: Double,
-    val datetime: String? = null
+    val datetime: String? = null,
+    val percentRating: Int
 )

@@ -13,8 +13,7 @@ data class RecyclePoint(
     val endWorking: String,
     val locationDescription: String? = null,
     val photoPath: String? = null,
-    val totalRating: Int? = null,
-    val totalReviews: Int? = null,
+    val totalRating: Double? = null,
     val approved: Boolean? = null,
     val type: String? = null,
 )

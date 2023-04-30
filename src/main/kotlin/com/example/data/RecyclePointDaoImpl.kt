@@ -34,7 +34,6 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.description,
                     RecyclePointTable.photoPath,
                     RecyclePointTable.totalRating,
-                    RecyclePointTable.totalReviews,
                     RecyclePointTable.approved,
                     RecyclePointTypeTable.type
                 ).selectAll().toList().map {
@@ -75,7 +74,6 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.description,
                     RecyclePointTable.photoPath,
                     RecyclePointTable.totalRating,
-                    RecyclePointTable.totalReviews,
                     RecyclePointTable.approved,
                     RecyclePointTypeTable.type).select { RecyclePointTable.id eq id }.singleOrNull()?.let {
                     ServiceResult.Success(rowToRecyclePoint(it))
@@ -287,7 +285,6 @@ class RecyclePointDaoImpl: RecyclePointDao {
             locationDescription = row[RecyclePointTable.description],
             photoPath = row[RecyclePointTable.photoPath],
             totalRating = row[RecyclePointTable.totalRating],
-            totalReviews = row[RecyclePointTable.totalReviews],
             approved = row[RecyclePointTable.approved],
         )
     }

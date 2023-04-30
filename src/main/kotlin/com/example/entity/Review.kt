@@ -7,7 +7,6 @@ data class Review(
     val id: Int? = null,
     val reviewText: String,
     val dateOf: String? = null,
-    val rating: Int,
     val pointId: Int? = null,
     val userId: Int = 1
 )

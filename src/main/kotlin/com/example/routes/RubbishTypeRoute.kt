@@ -6,9 +6,10 @@ import com.example.domain.usecase.rubbishType.GetTotalRubbishTypeTakeOff
 import com.example.domain.usecase.rubbishType.InsertRubbishType
 import com.example.entity.RubbishType
 import com.example.utils.Const.DEFAULT_ID
-import com.example.utils.respondWithCode
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
@@ -23,34 +24,42 @@ fun Route.rubbishTypeRoute() {
 
         get("/total") {
             val name = call.request.queryParameters["name"] ?: ""
-            call.respondWithCode {
-                getTotalRubbishTypeTakeOff(name)
-            }
+            val result = getTotalRubbishTypeTakeOff(name)
+            call.respond(
+                message = result,
+                status = HttpStatusCode.fromValue(result.statusCode)
+            )
         }
 
         get("/{id}") {
             val id = call.parameters["id"]
-            call.respondWithCode {
-                getRubbishTypeById(
-                    id?.toInt() ?: DEFAULT_ID
-                )
-            }
+            val result = getRubbishTypeById(
+                id?.toInt() ?: DEFAULT_ID
+            )
+            call.respond(
+                message = result,
+                status = HttpStatusCode.fromValue(result.statusCode)
+            )
         }
 
         post {
             val rubbishType = call.receive<RubbishType>()
-            call.respondWithCode {
-                insertRubbishType(rubbishType)
-            }
+            val result = insertRubbishType(rubbishType)
+            call.respond(
+                message = result,
+                status = HttpStatusCode.fromValue(result.statusCode)
+            )
         }
 
         delete("/{id}") {
             val id = call.parameters["id"]
-            call.respondWithCode {
-                deleteRubbishTypeById(
-                    id?.toInt() ?: DEFAULT_ID
-                )
-            }
+            val result = deleteRubbishTypeById(
+                id?.toInt() ?: DEFAULT_ID
+            )
+            call.respond(
+                message = result,
+                status = HttpStatusCode.fromValue(result.statusCode)
+            )
         }
 
     }

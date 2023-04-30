@@ -20,6 +20,7 @@ class UserTakeOffDaoImpl : UserTakeOffDao {
                     it[this.idRecyclePoint] = takeOff.idRecyclePoint
                     it[this.idRubbishType] = takeOff.idRubbishType
                     it[this.amountInGrams] = takeOff.amountInGrams
+                    it[this.percentRating] = takeOff.percentRating
                 }.resultedValues?.singleOrNull()?.let {
                     ServiceResult.Success(rowToUserTakeOff(it))
                 } ?: ServiceResult.Error(Errors.INSERT_FAILED)
@@ -99,7 +100,8 @@ class UserTakeOffDaoImpl : UserTakeOffDao {
                 .value,
             idRubbishType = row[UserTakeOffTable.idRubbishType].value,
             amountInGrams = row[UserTakeOffTable.amountInGrams],
-            datetime = row[UserTakeOffTable.datetime].toString()
+            datetime = row[UserTakeOffTable.datetime].toString(),
+            percentRating = row[UserTakeOffTable.percentRating],
         )
     }
 }
