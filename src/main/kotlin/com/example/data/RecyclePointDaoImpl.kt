@@ -1,8 +1,10 @@
 package com.example.data
 
 import com.example.data.database.DatabaseFactory.dbQuery
+import com.example.data.database.RecyclePointRubbishTypeTable
 import com.example.data.database.RecyclePointTable
 import com.example.data.database.RecyclePointTypeTable
+import com.example.data.database.RubbishTypeTable
 import com.example.domain.dao.RecyclePointDao
 import com.example.entity.RecyclePoint
 import com.example.utils.*
@@ -36,7 +38,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.approved,
                     RecyclePointTypeTable.type
                 ).selectAll().toList().map {
-                    rowToRecyclePoint(it)
+                    it.toRecyclePoint()
                 }
             }
 
@@ -74,7 +76,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
                     RecyclePointTable.totalRating,
                     RecyclePointTable.approved,
                     RecyclePointTypeTable.type).select { RecyclePointTable.id eq id }.singleOrNull()?.let {
-                    ServiceResult.Success(rowToRecyclePoint(it))
+                    ServiceResult.Success(it.toRecyclePoint())
                 } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
             }
         }
@@ -83,18 +85,20 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
-    override suspend fun getPointByQuery(query: String): ServiceResult<RecyclePoint> {
+    override suspend fun getPointByQuery(query: String):
+            ServiceResult<List<RecyclePoint>> {
         return try {
             dbQuery {
-                (RecyclePointTable innerJoin RecyclePointTypeTable).select {
+                val points = (RecyclePointTable innerJoin
+                        RecyclePointTypeTable).select {
                     concat(separator = ",",
                         expr = listOf(RecyclePointTable.streetName.lowerCase(),
                         RecyclePointTable.streetHouseNum)
                     ) like query.lowercase().plus("%")
-                }.singleOrNull()?.let {
-                    ServiceResult.Success(rowToRecyclePoint(it))
-
-                } ?: ServiceResult.Error(Errors.EMPTY_DATA)
+                }.toList().map {
+                    it.toRecyclePoint()
+                }
+                ServiceResult.Success(points)
             }
         }
         catch (e: Exception) {
@@ -153,8 +157,7 @@ class RecyclePointDaoImpl: RecyclePointDao {
                                 point.locationDescription
                             it[type] = typeId.data
                         }.resultedValues?.singleOrNull()?.let {
-                            ServiceResult.Success(rowToRecyclePoint
-                                (it))
+                            ServiceResult.Success(it.toRecyclePoint())
                         } ?: ServiceResult.Error(Errors.INSERT_FAILED)
 
                     }
@@ -217,6 +220,23 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
+    override suspend fun getPointsFilteredByType(types: List<String>):
+            ServiceResult<List<RecyclePoint>> {
+        return try {
+            dbQuery {
+                val points = RecyclePointRubbishTypeTable
+                    .innerJoin(RecyclePointTable)
+                    .innerJoin(RubbishTypeTable).select {
+                        RubbishTypeTable.type inList types
+                    }.toList().map { it.toRecyclePoint() }
+                ServiceResult.Success(points)
+            }
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+    }
+
     @Unused
     override suspend fun downloadPointPhoto(idPoint: Int): ServiceResult<ByteReadChannel> {
         return try {
@@ -268,18 +288,20 @@ class RecyclePointDaoImpl: RecyclePointDao {
         }
     }
 
-    private fun rowToRecyclePoint(row: ResultRow): RecyclePoint {
+    private fun ResultRow.toRecyclePoint():
+            RecyclePoint {
         return RecyclePoint(
-            id = row[RecyclePointTable.id].value,
-            latitude = row[RecyclePointTable.latitude],
-            longitude = row[RecyclePointTable.longitude],
-            streetName = row[RecyclePointTable.streetName],
-            streetHouseNum = row[RecyclePointTable.streetHouseNum],
-            weekSchedule = row[RecyclePointTable.weekSchedule],
-            locationDescription = row[RecyclePointTable.description],
-            photoPath = row[RecyclePointTable.photoPath],
-            totalRating = row[RecyclePointTable.totalRating],
-            approved = row[RecyclePointTable.approved],
+            id = this[RecyclePointTable.id].value,
+            latitude = this[RecyclePointTable.latitude],
+            longitude = this[RecyclePointTable.longitude],
+            streetName = this[RecyclePointTable.streetName],
+            streetHouseNum = this[RecyclePointTable.streetHouseNum],
+            weekSchedule = this[RecyclePointTable.weekSchedule],
+            locationDescription = this[RecyclePointTable
+                .description],
+            photoPath = this[RecyclePointTable.photoPath],
+            totalRating = this[RecyclePointTable.totalRating],
+            approved = this[RecyclePointTable.approved],
         )
     }
 

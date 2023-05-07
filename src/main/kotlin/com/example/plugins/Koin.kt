@@ -47,6 +47,7 @@ val recyclePointModule = module {
     single { DownloadPointPhoto(get()) }
     single { DeleteRecyclePoint(get()) }
     single { GetRecyclePointByQuery(get()) }
+    single { GetPointsFilteredByType(get()) }
 }
 
 val reviewModule = module {

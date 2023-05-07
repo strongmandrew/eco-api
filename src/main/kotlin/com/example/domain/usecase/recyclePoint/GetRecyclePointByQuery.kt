@@ -10,7 +10,7 @@ class GetRecyclePointByQuery(
     private val recyclePointDao: RecyclePointDao
 ) {
     suspend operator fun invoke(query: String):
-            Response<RecyclePoint> {
+            Response<List<RecyclePoint>> {
         return when (val point = recyclePointDao.getPointByQuery
             (query)) {
 

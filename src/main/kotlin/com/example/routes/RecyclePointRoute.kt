@@ -26,6 +26,7 @@ fun Route.recyclePointRoute() {
     val insertRecyclePoint: InsertRecyclePoint by inject()
     val deleteRecyclePoint: DeleteRecyclePoint by inject()
     val getRecyclePointByQuery: GetRecyclePointByQuery by inject()
+    val getRecyclePointsFilteredByType: GetPointsFilteredByType by inject()
 
     val getReviewsByPointId: GetReviewsByPointId by inject()
     val insertReview: InsertReview by inject()
@@ -44,23 +45,30 @@ fun Route.recyclePointRoute() {
 
             get {
 
-                val query = call.request.queryParameters["query"]
-
-                query?.let {
-                    val result = getRecyclePointByQuery(it)
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.fromValue(result.statusCode)
-                    )
-                    return@get
-                }
-
                 val result = getRecyclePoints()
                 call.respond(
                     message = result,
                     status = HttpStatusCode.fromValue(result.statusCode)
                 )
 
+            }
+
+            get("/byFilter") {
+                val query = call.request.queryParameters["query"]
+                val filter = call.request.queryParameters["filter"]
+
+                val queryPoints = query?.let {
+                    getRecyclePointByQuery(it).data
+                } ?: emptyList()
+
+                val filteredPoints = filter?.let {
+                    getRecyclePointsFilteredByType(it).data
+                } ?: emptyList()
+
+                call.respond(
+                    message = queryPoints + filteredPoints,
+                    status = HttpStatusCode.OK
+                )
             }
 
             post {
