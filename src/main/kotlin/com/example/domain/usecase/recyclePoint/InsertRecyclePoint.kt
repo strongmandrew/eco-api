@@ -12,44 +12,47 @@ class InsertRecyclePoint(
 
 
     suspend operator fun invoke(recyclePoint: RecyclePoint):
-            Response<RecyclePoint> {
+            Response<RecyclePoint> = when (
+        val result =
+            recyclePointDao.suchPointDoesNotExist(recyclePoint)
+    ) {
+
+        is ServiceResult.Success -> {
 
 
-        return when (val result = recyclePointDao.suchPointDoesNotExist(recyclePoint)) {
+            when (val insert =
+                recyclePointDao.registerPoint(recyclePoint)) {
 
-            is ServiceResult.Success -> {
+                is ServiceResult.Success -> {
 
+                    Response(
+                        data = recyclePoint,
+                        statusCode = 201
+                    )
 
-                when (val insert = recyclePointDao.registerPoint(recyclePoint)) {
-
-                    is ServiceResult.Success -> {
-
-                        Response(
-                            data = recyclePoint,
-                            statusCode = 201
-                        )
-
-                    }
-                    is ServiceResult.Error -> {
-                        Response(
-                            statusCode = insert.error.statusCode,
-                            error = ErrorResponse(insert.error.name, insert.error.message)
-                        )
-                    }
                 }
 
+                is ServiceResult.Error -> {
+                    Response(
+                        statusCode = insert.error.statusCode,
+                        error = ErrorResponse(
+                            insert.error.name,
+                            insert.error.message
+                        )
+                    )
+                }
             }
-            is ServiceResult.Error -> {
-                Response(
-                    statusCode = result.error.statusCode,
-                    error = ErrorResponse(result.error.name, result.error.message)
+
+        }
+
+        is ServiceResult.Error -> {
+            Response(
+                statusCode = result.error.statusCode,
+                error = ErrorResponse(
+                    result.error.name,
+                    result.error.message
                 )
-            }
+            )
         }
     }
-
-
-
-
-
 }

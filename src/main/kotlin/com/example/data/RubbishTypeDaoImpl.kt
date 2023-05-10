@@ -10,86 +10,84 @@ import com.example.utils.ServiceResult
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class RubbishTypeDaoImpl: RubbishTypeDao {
-    override suspend fun insertRubbishType(rubbishType: RubbishType): ServiceResult<RubbishType> {
-        return try {
-            dbQuery {
-                RubbishTypeTable.insert {
-                    it[this.type] = rubbishType.type
-                    it[this.description] = rubbishType.description
-                }.resultedValues?.singleOrNull()?.let {
-                    ServiceResult.Success(rowToRubbishType(it))
-                } ?: ServiceResult.Error(Errors.INSERT_FAILED)
-            }
+class RubbishTypeDaoImpl : RubbishTypeDao {
+    override suspend fun insertRubbishType(
+        rubbishType: RubbishType,
+    ) = try {
+        dbQuery {
+            RubbishTypeTable.insert {
+                it[this.type] = rubbishType.type
+                it[this.description] = rubbishType.description
+            }.resultedValues?.singleOrNull()?.let {
+                ServiceResult.Success(it.toRubbishType())
+            } ?: ServiceResult.Error(Errors.INSERT_FAILED)
         }
-        catch (e: Exception) {
-            ServiceResult.Error(Errors.DATABASE_ERROR)
-        }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
-    override suspend fun getRubbishTypeById(rubbishTypeId: Int): ServiceResult<RubbishType> {
-        return try {
-            dbQuery {
-                RubbishTypeTable.select {
-                    RubbishTypeTable.id eq rubbishTypeId
-                }.singleOrNull()?.let {
-                    ServiceResult.Success(rowToRubbishType(it))
-                } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
-            }
+    override suspend fun getRubbishTypeById(
+        rubbishTypeId: Int,
+    ) = try {
+        dbQuery {
+            RubbishTypeTable.select {
+                RubbishTypeTable.id eq rubbishTypeId
+            }.singleOrNull()?.let {
+                ServiceResult.Success(it.toRubbishType())
+            } ?: ServiceResult.Error(Errors.NOT_FOUND)
         }
-        catch (e: Exception) {
-            ServiceResult.Error(Errors.DATABASE_ERROR)
-        }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
-    override suspend fun getTotalRubbishTypeTakeOffByName
-                (rubbishType: String): ServiceResult<Double> {
-        return try {
-            dbQuery {
-                UserTakeOffTable
-                    .join(
-                        otherTable = RubbishTypeTable,
-                        joinType = JoinType.INNER,
-                        onColumn = UserTakeOffTable.idRubbishType,
-                        otherColumn = RubbishTypeTable.id
+    override suspend fun getTotalRubbishTypeTakeOffByName(
+        rubbishType: String,
+    ) = try {
+        dbQuery {
+            UserTakeOffTable
+                .join(
+                    otherTable = RubbishTypeTable,
+                    joinType = JoinType.INNER,
+                    onColumn = UserTakeOffTable.idRubbishType,
+                    otherColumn = RubbishTypeTable.id
+                )
+                .slice(
+                    UserTakeOffTable
+                        .amountInGrams.sum()
+                )
+                .select {
+                    RubbishTypeTable.type.lowerCase() eq
+                            rubbishType.lowercase()
+                }
+                .singleOrNull()?.let {
+                    ServiceResult.Success(
+                        it[UserTakeOffTable
+                            .amountInGrams.sum()] ?: 0.0
                     )
-                    .slice(UserTakeOffTable
-                    .amountInGrams.sum())
-                    .select { RubbishTypeTable.type.lowerCase() eq
-                            rubbishType.lowercase() }
-                    .singleOrNull()?.let {
-                        ServiceResult.Success(it[UserTakeOffTable
-                            .amountInGrams.sum()] ?: 0.0)
-                    } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
-            }
+                } ?: ServiceResult.Error(Errors.NOT_FOUND)
         }
-        catch (e: Exception) {
-            println(e.message)
-            ServiceResult.Error(Errors.DATABASE_ERROR)
-        }
+    } catch (e: Exception) {
+        println(e.message)
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
-    override suspend fun deleteRubbishTypeById(rubbishTypeId: Int): ServiceResult<Boolean> {
-        return try {
-            dbQuery {
-                if (RubbishTypeTable.deleteWhere {
-                    this.id eq rubbishTypeId
-                } > 0)
-                    ServiceResult.Success(true)
-                else
-                    ServiceResult.Error(Errors.ID_NOT_FOUND)
-            }
+    override suspend fun deleteRubbishTypeById(
+        rubbishTypeId: Int,
+    ) = try {
+        dbQuery {
+            val deleteSucceeded = RubbishTypeTable.deleteWhere {
+                this.id eq rubbishTypeId
+            } > 0
+
+            ServiceResult.Success(deleteSucceeded)
         }
-        catch (e: Exception) {
-            ServiceResult.Error(Errors.DATABASE_ERROR)
-        }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
-    private fun rowToRubbishType(row: ResultRow): RubbishType {
-        return RubbishType(
-            id = row[RubbishTypeTable.id].value,
-            type = row[RubbishTypeTable.type],
-            description = row[RubbishTypeTable.description]
-        )
-    }
+    private fun ResultRow.toRubbishType() = RubbishType(
+        id = this[RubbishTypeTable.id].value,
+        type = this[RubbishTypeTable.type],
+        description = this[RubbishTypeTable.description]
+    )
 }

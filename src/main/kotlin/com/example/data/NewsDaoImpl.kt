@@ -17,8 +17,7 @@ class NewsDaoImpl : NewsDao {
                 NewsTable.selectAll().toList().map { rowToNews(it) }
             }
 
-            if (news.isNotEmpty()) ServiceResult.Success(news)
-            else ServiceResult.Error(Errors.EMPTY_DATA)
+            ServiceResult.Success(news)
         }
         catch (e: Exception) {
             ServiceResult.Error(Errors.DATABASE_ERROR)

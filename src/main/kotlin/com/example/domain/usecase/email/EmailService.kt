@@ -41,7 +41,6 @@ class EmailService(
             ServiceResult.Success(true)
 
         } catch (e: Exception) {
-
             ServiceResult.Error(Errors.EMAIL_SERVICE_UNAVAILABLE)
         }
 

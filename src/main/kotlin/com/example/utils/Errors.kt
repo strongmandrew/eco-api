@@ -11,19 +11,15 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
     INSERT_FAILED(
         message = "Unable to insert data",
     ),
-    ID_NOT_FOUND(
-        message = "Input id cannot be found in database",
-        statusCode = 202
+    NOT_FOUND(
+        message = "Entity you're looking for cannot be found",
+        statusCode = 200
     ),
     UPDATE_FAILED(
         message = "Failed to update database entry",
     ),
     FILE_SYSTEM_ERROR(
         message = "Failed to upload a file"
-    ),
-    ALREADY_EXISTS(
-        message = "Data already exists in database",
-        statusCode = 202
     ),
     EMAIL_SERVICE_UNAVAILABLE(
         message = "Email service is temporally unavailable",

@@ -12,96 +12,90 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 class UserTakeOffDaoImpl : UserTakeOffDao {
     override suspend fun takeOffRubbish(
         takeOff: UserTakeOff,
-    ): ServiceResult<UserTakeOff> {
-        return try {
-            dbQuery {
-                UserTakeOffTable.insert {
-                    it[this.idUser] = takeOff.idUser
-                    it[this.idRecyclePoint] = takeOff.idRecyclePoint
-                    it[this.idRubbishType] = takeOff.idRubbishType
-                    it[this.amountInGrams] = takeOff.amountInGrams
-                    it[this.percentRating] = takeOff.percentRating
-                }.resultedValues?.singleOrNull()?.let {
-                    ServiceResult.Success(rowToUserTakeOff(it))
-                } ?: ServiceResult.Error(Errors.INSERT_FAILED)
-            }
-        } catch (e: Exception) {
-            ServiceResult.Error(Errors.DATABASE_ERROR)
+    ) = try {
+        dbQuery {
+            UserTakeOffTable.insert {
+                it[this.idUser] = takeOff.idUser
+                it[this.idRecyclePoint] = takeOff.idRecyclePoint
+                it[this.idRubbishType] = takeOff.idRubbishType
+                it[this.amountInGrams] = takeOff.amountInGrams
+                it[this.percentRating] = takeOff.percentRating
+            }.resultedValues?.singleOrNull()?.let {
+                ServiceResult.Success(it.toUserTakeoff())
+            } ?: ServiceResult.Error(Errors.INSERT_FAILED)
         }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
-    override suspend fun totalUserTakeOff(idUser: Int): ServiceResult<Double> {
-        return try {
-            dbQuery {
-                UserTakeOffTable
-                    .slice(UserTakeOffTable.amountInGrams.sum())
-                    .select { UserTakeOffTable.idUser eq idUser }
-                    .singleOrNull()?.let {
-                        ServiceResult.Success(it[UserTakeOffTable
-                            .amountInGrams.sum()] ?: 0.0)
-                    } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
-            }
-        } catch (e: Exception) {
-            println(e.message)
-            ServiceResult.Error(Errors.DATABASE_ERROR)
+    override suspend fun totalUserTakeOff(idUser: Int) = try {
+        dbQuery {
+            UserTakeOffTable
+                .slice(UserTakeOffTable.amountInGrams.sum())
+                .select { UserTakeOffTable.idUser eq idUser }
+                .singleOrNull()?.let {
+                    ServiceResult.Success(
+                        it[UserTakeOffTable
+                            .amountInGrams.sum()] ?: 0.0
+                    )
+                } ?: ServiceResult.Error(Errors.NOT_FOUND)
         }
+    } catch (e: Exception) {
+        println(e.message)
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
-    override suspend fun getUserTakeOffById(idUser: Int): ServiceResult<List<UserTakeOff>> {
-        return try {
-            dbQuery {
-                UserTakeOffTable
-                    .select { UserTakeOffTable.idUser eq idUser }
-                    .map {
-                        rowToUserTakeOff(it)
-                    }
-                    .let { ServiceResult.Success(it) }
-            }
-        } catch (e: Exception) {
-            ServiceResult.Error(Errors.DATABASE_ERROR)
+    override suspend fun getUserTakeOffById(idUser: Int) = try {
+        dbQuery {
+            UserTakeOffTable
+                .select { UserTakeOffTable.idUser eq idUser }
+                .map {
+                    it.toUserTakeoff()
+                }
+                .let { ServiceResult.Success(it) }
         }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
-    override suspend fun getTakeOffById(id: Int): ServiceResult<UserTakeOff> {
-        return try {
-            dbQuery {
-                UserTakeOffTable
-                    .select { UserTakeOffTable.id eq id }
-                    .singleOrNull()?.let {
-                        ServiceResult.Success(rowToUserTakeOff(it))
-                    } ?: ServiceResult.Error(Errors.ID_NOT_FOUND)
-            }
-        } catch (e: Exception) {
-            ServiceResult.Error(Errors.DATABASE_ERROR)
+    override suspend fun getTakeOffById(
+        id: Int,
+    ) = try {
+        dbQuery {
+            UserTakeOffTable
+                .select { UserTakeOffTable.id eq id }
+                .singleOrNull()?.let {
+                    ServiceResult.Success(it.toUserTakeoff())
+                } ?: ServiceResult.Error(Errors.NOT_FOUND)
         }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
     override suspend fun revertTakeOff(idTakeOff: Int): ServiceResult<Boolean> {
         return try {
             dbQuery {
                 if (UserTakeOffTable
-                    .deleteWhere { UserTakeOffTable.id eq idTakeOff} > 0
-                    )
+                        .deleteWhere { UserTakeOffTable.id eq idTakeOff } > 0
+                )
                     ServiceResult.Success(true)
-
-                else ServiceResult.Error(Errors.ID_NOT_FOUND)
+                else ServiceResult.Error(Errors.NOT_FOUND)
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             ServiceResult.Error(Errors.DATABASE_ERROR)
         }
     }
 
-    private fun rowToUserTakeOff(row: ResultRow): UserTakeOff {
+    private fun ResultRow.toUserTakeoff(): UserTakeOff {
         return UserTakeOff(
-            id = row[UserTakeOffTable.id].value,
-            idUser = row[UserTakeOffTable.idUser].value,
-            idRecyclePoint = row[UserTakeOffTable.idRecyclePoint]
+            id = this[UserTakeOffTable.id].value,
+            idUser = this[UserTakeOffTable.idUser].value,
+            idRecyclePoint = this[UserTakeOffTable.idRecyclePoint]
                 .value,
-            idRubbishType = row[UserTakeOffTable.idRubbishType].value,
-            amountInGrams = row[UserTakeOffTable.amountInGrams],
-            datetime = row[UserTakeOffTable.datetime].toString(),
-            percentRating = row[UserTakeOffTable.percentRating],
+            idRubbishType = this[UserTakeOffTable.idRubbishType].value,
+            amountInGrams = this[UserTakeOffTable.amountInGrams],
+            datetime = this[UserTakeOffTable.datetime].toString(),
+            percentRating = this[UserTakeOffTable.percentRating],
         )
     }
 }

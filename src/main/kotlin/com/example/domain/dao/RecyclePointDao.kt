@@ -10,7 +10,6 @@ interface RecyclePointDao {
     suspend fun getPointByQuery(query: String):
             ServiceResult<List<RecyclePoint>>
     suspend fun suchPointDoesNotExist(recyclePoint: RecyclePoint): ServiceResult<Boolean>
-    suspend fun uploadMultipartPhoto(photoBytes: ByteArray, photoName: String): ServiceResult<Boolean>
     suspend fun uploadChannelPhoto(photoChannel: ByteReadChannel, photoName: String):
             ServiceResult<Boolean>
     suspend fun registerPoint(point: RecyclePoint): ServiceResult<RecyclePoint>
@@ -18,8 +17,6 @@ interface RecyclePointDao {
     suspend fun getPointApprovalById(idPoint: Int): ServiceResult<Boolean>
     suspend fun deletePoint(idPoint: Int): ServiceResult<Boolean>
     suspend fun insertPhotoPath(idPoint: Int, photoPath: String): ServiceResult<Boolean>
-    suspend fun downloadPointPhoto(idPoint: Int): ServiceResult<ByteReadChannel>
-
     suspend fun getPointsFilteredByType(types: List<String>):
             ServiceResult<List<RecyclePoint>>
 }
