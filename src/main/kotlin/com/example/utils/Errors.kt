@@ -29,13 +29,17 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
         message = "Verify your email first to authorize",
         statusCode = 202
     ),
-    UNAUTHORIZED(
-        message = "Invalid user",
+    ACTION_NOT_ALLOWED(
+        message = "Not enough permissions for the action",
         statusCode = 401
     ),
     BAD_INPUT(
         message = "Make sure your inputs and field names are correct",
         statusCode = 400
+    ),
+    EMAIL_ALREADY_EXISTS(
+        message = "User with the same email already exists",
+        statusCode = 200
     )
 
 }

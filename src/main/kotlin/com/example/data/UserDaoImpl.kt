@@ -170,7 +170,7 @@ class UserDaoImpl(
             val exists = UserTable.select {
                 UserTable.email eq
                         email
-            }.count() != 0L
+            }.count() < 1
             ServiceResult.Success(exists)
         }
     } catch (e: Exception) {
@@ -184,7 +184,7 @@ class UserDaoImpl(
             val exists = UserEmailCodeTable.select {
                 UserEmailCodeTable
                     .email eq email
-            }.count() != 0L
+            }.count() == 0L
 
             ServiceResult.Success(exists)
         }

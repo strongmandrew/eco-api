@@ -1,5 +1,6 @@
 package com.example.domain.usecase.user
 
+import com.example.domain.EMAILEXISTSResponse
 import com.example.domain.ErrorResponse
 import com.example.domain.Response
 import com.example.domain.dao.UserDao
@@ -11,49 +12,58 @@ class RegisterUser(
 ) {
     suspend operator fun invoke(user: User): Response<User> {
 
-        return when (val exist = userDao.emailDoesNotExist(user.email)) {
+        return when (val exist =
+            userDao.emailDoesNotExist(user.email)) {
 
             is ServiceResult.Success -> {
 
-                when (val blacklist = userDao.isEmailNotInBlacklist
-                    (user.email)) {
+                if (exist.data) {
+                    when (val blacklist =
+                        userDao.isEmailNotInBlacklist
+                            (user.email)) {
 
-                    is ServiceResult.Success -> {
+                        is ServiceResult.Success -> {
 
-                        when (val registry = userDao.registerUser(user)) {
+                            when (val registry =
+                                userDao.registerUser(user)) {
 
-                            is ServiceResult.Success -> {
+                                is ServiceResult.Success -> {
 
-                                Response(
-                                    data = registry.data,
-                                    statusCode = 201
-                                )
-                            }
+                                    Response(
+                                        data = registry.data,
+                                        statusCode = 201
+                                    )
+                                }
 
-                            is ServiceResult.Error -> {
-                                Response(
-                                    error = ErrorResponse(
-                                        registry.error.name, registry.error.message
-                                    ),
-                                    statusCode = registry.error.statusCode
-                                )
+                                is ServiceResult.Error -> {
+                                    Response(
+                                        error = ErrorResponse(
+                                            registry.error.name,
+                                            registry.error.message
+                                        ),
+                                        statusCode = registry.error.statusCode
+                                    )
+                                }
                             }
                         }
 
-                    }
-                    is ServiceResult.Error -> {
+                        is ServiceResult.Error -> {
 
-                        Response(
-                            error = ErrorResponse(
-                                blacklist.error.name, blacklist.error.message
-                            ),
-                            statusCode = blacklist.error.statusCode
-                        )
+                            Response(
+                                error = ErrorResponse(
+                                    blacklist.error.name,
+                                    blacklist.error.message
+                                ),
+                                statusCode = blacklist.error.statusCode
+                            )
+                        }
                     }
+                } else {
+                    EMAILEXISTSResponse
                 }
             }
-            is ServiceResult.Error -> {
 
+            is ServiceResult.Error -> {
                 Response(
                     error = ErrorResponse(
                         exist.error.name, exist.error.message

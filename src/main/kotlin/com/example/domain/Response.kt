@@ -1,5 +1,6 @@
 package com.example.domain
 
+import com.example.entity.User
 import com.example.utils.DevOnly
 import com.example.utils.Errors
 import kotlinx.serialization.Serializable
@@ -8,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class Response<out T>(
     val data: T? = null,
     val statusCode: Int,
-    val error: ErrorResponse? = null
+    val error: ErrorResponse? = null,
 ) {
 
     companion object {
@@ -21,19 +22,33 @@ data class Response<out T>(
         }
     }
 }
+
 @Serializable
 data class ErrorResponse(val name: String, val description: String)
 
-val UNAUTHORIZEDResponse = Response<Boolean>(
-    error = ErrorResponse(
-        Errors.UNAUTHORIZED.name, Errors.UNAUTHORIZED.message
-    ),
-    statusCode = Errors.UNAUTHORIZED.statusCode
-)
+val NOTALLOWEDResponse = with(Errors.ACTION_NOT_ALLOWED) {
+    Response<Boolean>(
+        error = ErrorResponse(
+            name, message
+        ),
+        statusCode = statusCode
+    )
+}
 
-val BADREQUESTResponse = Response<Boolean>(
-    error = ErrorResponse(
-        Errors.BAD_INPUT.name, Errors.BAD_INPUT.message
-    ),
-    statusCode = Errors.BAD_INPUT.statusCode
-)
+val EMAILEXISTSResponse = with(Errors.EMAIL_ALREADY_EXISTS) {
+    Response<User>(
+        error = ErrorResponse(
+            name, message
+        ),
+        statusCode = statusCode
+    )
+}
+
+val BADREQUESTResponse = with(Errors.BAD_INPUT) {
+    Response<Boolean>(
+        error = ErrorResponse(
+            name, message
+        ),
+        statusCode = statusCode
+    )
+}

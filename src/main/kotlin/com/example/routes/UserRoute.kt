@@ -59,6 +59,40 @@ fun Route.userRoute() {
 
         }
 
+        route(Endpoint.VALIDATE.path) {
+            route(Endpoint.SEND.path) {
+                post {
+
+                    val validateEmail = call.receive<EmailSend>()
+                    val result =
+                        sendValidation(validateEmail.email)
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.fromValue(result.statusCode)
+                    )
+                }
+            }
+
+            route(Endpoint.APPROVE.path) {
+
+                post {
+
+                    val compareEmailCode = call
+                        .receive<EmailCodeApprove>()
+
+                    val result = approveValidation(
+                        compareEmailCode.email,
+                        compareEmailCode.code
+                    )
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.fromValue(result.statusCode)
+                    )
+                }
+            }
+
+        }
+
         authenticate("user-auth") {
             get {
 
@@ -97,40 +131,6 @@ fun Route.userRoute() {
                         )
                     }
                 }
-            }
-
-            route(Endpoint.VALIDATE.path) {
-                route(Endpoint.SEND.path) {
-                    post {
-
-                        val validateEmail = call.receive<EmailSend>()
-                        val result =
-                            sendValidation(validateEmail.email)
-                        call.respond(
-                            message = result,
-                            status = HttpStatusCode.fromValue(result.statusCode)
-                        )
-                    }
-                }
-
-                route(Endpoint.APPROVE.path) {
-
-                    post {
-
-                        val compareEmailCode = call
-                            .receive<EmailCodeApprove>()
-
-                        val result = approveValidation(
-                            compareEmailCode.email,
-                            compareEmailCode.code
-                        )
-                        call.respond(
-                            message = result,
-                            status = HttpStatusCode.fromValue(result.statusCode)
-                        )
-                    }
-                }
-
             }
         }
     }
