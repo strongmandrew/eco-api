@@ -10,6 +10,7 @@ import com.example.entity.User
 import com.example.utils.Const.DEFAULT_ID
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -28,21 +29,8 @@ fun Route.userRoute() {
 
     route(Endpoint.USER.path) {
 
-        get {
-
-            val email = call.request.queryParameters["email"]
-
-            val result = getUserByEmail(email ?: "")
-            call.respond(
-                message = result,
-                status = HttpStatusCode.fromValue(result.statusCode)
-            )
-        }
-
         route(Endpoint.REGISTER.path) {
-
             post {
-
                 val user = call.receive<User>()
 
                 val result = registerUser(user)
@@ -71,65 +59,79 @@ fun Route.userRoute() {
 
         }
 
-        route("/{id}") {
+        authenticate("user-auth") {
+            get {
 
-            route(Endpoint.TAKE_OFF.path) {
+                val email = call.request.queryParameters["email"]
 
-                get {
-                    val id = call.parameters["id"]
-                    val result = getAllUserTakeOffs(id?.toInt() ?: DEFAULT_ID)
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.fromValue(result.statusCode)
-                    )
+                val result = getUserByEmail(email ?: "")
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.fromValue(result.statusCode)
+                )
+            }
+
+            route("/{id}") {
+
+                route(Endpoint.TAKE_OFF.path) {
+
+                    get {
+                        val id = call.parameters["id"]
+                        val result = getAllUserTakeOffs(
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
+                    }
+
+                    get(Endpoint.TOTAL.path) {
+                        val id = call.parameters["id"]
+                        val result = getTotalUserTakeOff(
+                            id?.toInt() ?: DEFAULT_ID
+                        )
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
+                    }
+                }
+            }
+
+            route(Endpoint.VALIDATE.path) {
+                route(Endpoint.SEND.path) {
+                    post {
+
+                        val validateEmail = call.receive<EmailSend>()
+                        val result =
+                            sendValidation(validateEmail.email)
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
+                    }
                 }
 
-                get(Endpoint.TOTAL.path) {
-                    val id = call.parameters["id"]
-                    val result = getTotalUserTakeOff(id?.toInt() ?: DEFAULT_ID)
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.fromValue(result.statusCode)
-                    )
+                route(Endpoint.APPROVE.path) {
+
+                    post {
+
+                        val compareEmailCode = call
+                            .receive<EmailCodeApprove>()
+
+                        val result = approveValidation(
+                            compareEmailCode.email,
+                            compareEmailCode.code
+                        )
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
+                    }
                 }
+
             }
         }
-
-        route(Endpoint.VALIDATE.path) {
-
-            route(Endpoint.SEND.path) {
-
-                post {
-
-                    val validateEmail = call.receive<EmailSend>()
-                    val result = sendValidation(validateEmail.email)
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.fromValue(result.statusCode)
-                    )
-                }
-            }
-
-            route(Endpoint.APPROVE.path) {
-
-                post {
-
-                    val compareEmailCode = call
-                        .receive<EmailCodeApprove>()
-
-                    val result = approveValidation(
-                        compareEmailCode.email,
-                        compareEmailCode.code
-                    )
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.fromValue(result.statusCode)
-                    )
-                }
-            }
-
-        }
-
     }
-
 }

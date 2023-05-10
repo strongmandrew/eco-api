@@ -31,9 +31,9 @@ fun Route.recyclePointRoute() {
     val getReviewsByPointId: GetReviewsByPointId by inject()
     val insertReview: InsertReview by inject()
 
-    authenticate("user-auth") {
-        route(Endpoint.RECYCLE_POINT.path) {
+    route(Endpoint.RECYCLE_POINT.path) {
 
+        authenticate("user-auth") {
             route(Endpoint.PHOTO.path) {
 
                 static {
@@ -41,7 +41,6 @@ fun Route.recyclePointRoute() {
                     files(".")
                 }
             }
-
 
             get {
 
@@ -81,9 +80,11 @@ fun Route.recyclePointRoute() {
                 )
 
             }
+        }
 
-            route("/{id}") {
+        route("/{id}") {
 
+            authenticate("admin-auth") {
                 patch(Endpoint.APPROVE.path) {
 
                     val id = call.parameters["id"]
@@ -96,19 +97,23 @@ fun Route.recyclePointRoute() {
                     )
                 }
 
-                get {
-
+                delete {
                     val id = call.parameters["id"]
-                    val result = getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
+                    val result =
+                        deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
                     call.respond(
                         message = result,
                         status = HttpStatusCode.fromValue(result.statusCode)
                     )
                 }
+            }
 
-                delete {
+            authenticate("user-auth") {
+                get {
+
                     val id = call.parameters["id"]
-                    val result = deleteRecyclePoint(id?.toInt() ?: DEFAULT_ID)
+                    val result =
+                        getRecyclePointById(id?.toInt() ?: DEFAULT_ID)
                     call.respond(
                         message = result,
                         status = HttpStatusCode.fromValue(result.statusCode)
@@ -172,4 +177,5 @@ fun Route.recyclePointRoute() {
             }
         }
     }
+
 }

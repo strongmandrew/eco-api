@@ -46,7 +46,8 @@ fun Application.configureSecurity() {
 
                     is ServiceResult.Success -> {
                         if (userId == user.data.id &&
-                            roleId == Role.USER.id &&
+                            (roleId == Role.USER.id || roleId ==
+                                    Role.ADMIN.id) &&
                             user.data.timesChanged == timesChanged
                             ) {
                             JWTPrincipal(it.payload)
@@ -59,6 +60,49 @@ fun Application.configureSecurity() {
                     }
                 }
 
+            }
+        }
+
+        jwt("admin-auth") {
+            realm = "Admin jwt authentication"
+
+            verifier {
+                JWT.require(
+                    Algorithm.HMAC256(JWTCredentials.jwtSecret)
+                ).withIssuer(JWTCredentials.jwtIss)
+                    .build()
+            }
+
+            validate {
+
+                val userId = it.getClaim(JWTHandler
+                    .JWT_USER_ID, Int::class)
+
+                val roleId = it.getClaim(JWTHandler.JWT_ROLE_ID,
+                    Int::class)
+
+                val timesChanged = it.getClaim(JWTHandler
+                    .JWT_TIMES_CHANGED, Int::class)
+
+                val user = userDao.getUserById(userId ?:
+                return@validate null)
+
+                return@validate when (user) {
+
+                    is ServiceResult.Success -> {
+                        if (userId == user.data.id &&
+                            roleId == Role.ADMIN.id &&
+                            user.data.timesChanged == timesChanged
+                        ) {
+                            JWTPrincipal(it.payload)
+                        }
+                        else
+                            null
+                    }
+                    is ServiceResult.Error -> {
+                        null
+                    }
+                }
             }
         }
     }
