@@ -44,30 +44,46 @@ fun Route.recyclePointRoute() {
 
             get {
 
-                val result = getRecyclePoints()
-                call.respond(
-                    message = result,
-                    status = HttpStatusCode.fromValue(result.statusCode)
-                )
-
-            }
-
-            get("/byFilter") {
                 val query = call.request.queryParameters["query"]
                 val filter = call.request.queryParameters["filter"]
 
-                val queryPoints = query?.let {
-                    getRecyclePointByQuery(it).data
-                } ?: emptyList()
+                val queried = query?.let { queried ->
+                    getRecyclePointByQuery(queried)
+                        .data?.toSet()
+                }
 
-                val filteredPoints = filter?.let {
-                    getRecyclePointsFilteredByType(it).data
-                } ?: emptyList()
+                val filtered = filter?.let { filtered ->
+                    getRecyclePointsFilteredByType(filtered)
+                        .data?.toSet()
+                }
 
-                call.respond(
-                    message = queryPoints + filteredPoints,
-                    status = HttpStatusCode.OK
-                )
+
+                return@get when {
+                    queried == null && filtered == null -> {
+                        val result = getRecyclePoints()
+                        return@get call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
+                    }
+
+                    queried == null ->
+                        call.respond(
+                            message = filtered!!,
+                            status = HttpStatusCode.OK
+                        )
+
+                    filtered == null -> call.respond(
+                        message = queried,
+                        status = HttpStatusCode.OK
+                    )
+
+
+                    else -> call.respond(
+                        message = filtered.intersect(queried),
+                        status = HttpStatusCode.OK
+                    )
+                }
             }
 
             post {

@@ -19,8 +19,6 @@ servers:
 tags:
   - name: user
     description: Operations about user
-  - name: user (admin)
-    description: Operations about user by admin role
   - name: recycle point
     description: Info about recycle points
   - name: review
@@ -33,7 +31,7 @@ paths:
   /user:
     get:
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuthUser: []
       parameters:
         - in: query
           name: email
@@ -48,10 +46,6 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/OutputUser'
-        '401':
-          description: You don't have permissions for that action
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       tags:
@@ -60,7 +54,7 @@ paths:
 
     delete:
       security:
-        - ApiKeyAuth: [ ]
+        - ApiKeyAuthAdmin: [ ]
       parameters:
         - in: path
           name: id
@@ -79,14 +73,10 @@ paths:
                   data:
                     type: boolean
                     example: true
-        '401':
-          description: You don't have permissions for that action
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       tags:
-        - user (admin)
+        - user
       summary: Delete certain user
   /user/register:
     post:
@@ -106,8 +96,6 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/OutputUser'
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       summary: Register user
@@ -127,8 +115,6 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/Token'
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       tags:
@@ -159,8 +145,6 @@ paths:
                   data:
                     type: boolean
                     example: true
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       tags:
@@ -189,8 +173,6 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/Token'
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       tags:
@@ -199,7 +181,7 @@ paths:
   /user/take_off:
     get:
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuthUser: []
       responses:
         '200':
           description: All user take-offs
@@ -207,10 +189,6 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/UserTakeoff'
-        '401':
-          description: You don't have permissions for that action
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       tags:
@@ -220,7 +198,7 @@ paths:
   /user/take_off/total:
     get:
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuthUser: []
       responses:
         '200':
           description: Total amount in grams of user take-offs
@@ -232,10 +210,6 @@ paths:
                   data:
                     type: double
                     example: 1700.1
-        '401':
-          description: You don't have permissions for that action
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
       tags:
@@ -246,8 +220,9 @@ paths:
     patch:
       tags:
         - user
+      summary: Changes user password
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuthUser: []
       requestBody:
         description: Triple of password to change
         required: true
@@ -262,47 +237,199 @@ paths:
             application/json:
               schema:
               $ref: '#components/schemas/Token'
-        '401':
-          description: You don't have permissions for that action
-        '500':
-          description: Internal server error
         default:
           description: According to response body error
 
   /recycle_point/photo/{path}:
     get:
+      parameters:
+        - in: path
+          name: path
+          required: true
+          schema:
+            type: string
+          description: Recycle point photo name
+      security:
+        - ApiKeyAuthUser: []
+      responses:
+        '200':
+          description: Recycle point photo
+          content:
+            img/png:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: According to response body error
       tags:
         - recycle point
-      summary: Return custom recycle point photo
-  /recycle_point?query={}:
-    get:
-      tags:
-        - recycle point
-      summary: Search by recycle point address
+      summary: Returns recycle point photo
+
   /recycle_point:
-    post:
+    get:
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '200':
+          description: Found recycle points
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputRecyclePoint'
+        default:
+          description: According to response body error
+      parameters:
+        - in: query
+          name: query
+          required: false
+          schema:
+            type: string
+          description: Specifies search by address
+        - in: query
+          name: filter
+          required: false
+          schema:
+            type: string
+          description: Specifies search by rubbish type filter
       tags:
         - recycle point
-      summary: Offer new recycle point to moderate
+      summary: Search for recycle points
+
+    post:
+      requestBody:
+        description: Recycle point to offer
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/InputRecyclePoint'
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '201':
+          description: Newly created recycle point
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputRecyclePoint'
+        default:
+          description: According to response body error
+      tags:
+        - recycle point
+      summary: Offer new recycle point
+
   /recycle_point/{id}:
     get:
+      parameters:
+        - in: path
+          name: id
+          required: false
+          schema:
+            type: integer
+          description: Certain recycle point id
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '200':
+          description: Recycle point with corresponding id
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputRecyclePoint'
+        default:
+          description: According to response body error
       tags:
         - recycle point
-      summary: Return recycle point by id
+      summary: Returns recycle point by id
+
     delete:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      responses:
+        '200':
+          description: Deletion success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
       tags:
         - recycle point
-      summary: Delete recycle point by id
+      summary: Deletes recycle point by id
+
   /recycle_point/{id}/photo:
     patch:
+      requestBody:
+        content:
+          image/png:
+           schema:
+             type: string
+             format: binary
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain recycle point id
+        - in: query
+          name: ext
+          required: true
+          schema:
+            type: string
+          description: Extension of photo
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '200':
+          description: Photo supply success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
       tags:
         - recycle point
-      summary: Add recycle point custom photo
+      summary: Adds recycle point photo
+
   /recycle_point/{id}/approve:
     patch:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain recycle point id
+      responses:
+        '200':
+          description: Approval success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
       tags:
         - recycle point
-      summary: Moderate offered recycle point (only for admins)
+      summary: Approves offered recycle points
+
   /recycle_point/{id}/review:
     get:
       tags:
@@ -312,6 +439,7 @@ paths:
       tags:
         - review
       summary: Create comment about recycle point
+
   /review/{id}:
     get:
       tags:
@@ -454,6 +582,65 @@ components:
           type: integer
           example: 70
 
+    InputRecyclePoint:
+      type: object
+      properties:
+        latitude:
+          type: double
+          example: 35.00918
+        longitude:
+          type: double
+          example: 43.1092
+        streetName:
+          type: string
+          example: Blagodatnaya
+        streetHouseNum:
+          type: string
+          example: 145
+        weekSchedule:
+          type: string
+          example: 9:00-18:00;9:00-18:00;9:00-18:00;9:00-18:00;9:00-18:00;-;-
+        locationDescription:
+          type: string
+          example: Locates not far away from metro station Elektrosila
+
+    OutputRecyclePoint:
+      type: object
+      properties:
+        id:
+          type: int
+          example: 1
+        latitude:
+          type: double
+          example: 35.00918
+        longitude:
+          type: double
+          example: 43.1092
+        streetName:
+          type: string
+          example: Blagodatnaya
+        streetHouseNum:
+          type: string
+          example: 145
+        weekSchedule:
+          type: string
+          example: 9:00-18:00;9:00-18:00;9:00-18:00;9:00-18:00;9:00-18:00;-;-
+        locationDescription:
+          type: string
+          example: Locates not far away from metro station Elektrosila
+        photoPath:
+          type: string
+          example: http://127.0.0.1:8080/recycle_point/photo/blag.png
+        totalRating:
+          type: double
+          example: 81.5
+        approved:
+          type: boolean
+          example: false
+        type:
+          type: string
+          example: Terminal
+
     Token:
       type: object
       properties:
@@ -461,7 +648,11 @@ components:
           type: string
           example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjE1LCJpc3MiOiJjb20uZXhhbXBsZS5lY28tYXBpIiwidGNoIjowLCJyaWQiOjF9.0vcPyDpvhyy4hWP2-jO8ZmoI1wSK7O34BHhBwn-9FTU
   securitySchemes:
-    ApiKeyAuth:
+    ApiKeyAuthAdmin:
+      type: apiKey
+      in: header
+      name: Authorization
+    ApiKeyAuthUser:
       type: apiKey
       in: header
       name: Authorization
