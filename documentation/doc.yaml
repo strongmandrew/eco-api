@@ -1,0 +1,374 @@
+openapi: 3.0.3
+info:
+  title: Ecomap REST API
+  description: |-
+    This is REST API on a rubbish recycling which provides the 
+    ability to track
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://127.0.0.1/api
+tags:
+  - name: user
+    description: Operations about user
+  - name: recycle point
+    description: Info about recycle points
+  - name: review
+    description: Reviews about recycle points
+  - name: rubbish type
+    description: Info about rubbish types
+  - name: take off
+    description: Info about user rubbish take offs
+paths:
+  /api/user:
+    get:
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+          description: User email you're looking for
+      responses:
+        '200':
+          description: Found user output
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputUser'
+        default:
+          description: According to response body error
+      tags:
+        - user
+      summary: Search for user by email
+  /api/user/register:
+    post:
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/InputUser'
+      tags:
+        - user
+      responses:
+        '200':
+          description: Newly created user
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputUser'
+        default:
+          description: According to response body error
+      summary: Register user
+  /api/user/authorize:
+    post:
+      requestBody:
+        description: User's email and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/AuthUser'
+      responses:
+        '201':
+          description: Successfully authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Token'
+        default:
+          description: According to response body error
+      tags:
+        - user
+      summary: Authorize user by credentials
+
+  /api/user/validate/send:
+    post:
+      requestBody:
+        description: User email to send code to
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: jacksparrow@gmail.com
+      responses:
+        '201':
+          description: Code has been sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
+      tags:
+        - user
+      summary: Endpoint to send approval code to user email
+  /api/user/validate/approve:
+    post:
+      requestBody:
+        description: User email and input code
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: jacksparrow@gmail.com
+                code:
+                  type: integer
+                  example: 756817
+      responses:
+        '201':
+          description: Code is correct
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Token'
+        default:
+          description: According to response body error
+      tags:
+        - user
+      summary: Compares input code with the sent one
+  /api/user/take_off:
+    get:
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: All user take-offs
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserTakeoff'
+        default:
+          description: According to response body error
+      tags:
+        - user
+        - take off
+      summary: Returns all user rubbish take-offs
+  /api/user/take_off/total:
+    get:
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Total amount in grams of user take-offs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: double
+                    example: 1700.0
+        default:
+          description: According to response body error
+      tags:
+        - user
+        - take off
+      summary: Returns total amount of user rubbish take-offs
+  /api/recycle_point/photo/{path}:
+    get:
+      tags:
+        - recycle point
+      summary: Return custom recycle point photo
+  /api/recycle_point?query={}:
+    get:
+      tags:
+        - recycle point
+      summary: Search by recycle point address
+  /api/recycle_point:
+    post:
+      tags:
+        - recycle point
+      summary: Offer new recycle point to moderate
+  /api/recycle_point/{id}:
+    get:
+      tags:
+        - recycle point
+      summary: Return recycle point by id
+    delete:
+      tags:
+        - recycle point
+      summary: Delete recycle point by id
+  /api/recycle_point/{id}/photo:
+    patch:
+      tags:
+        - recycle point
+      summary: Add recycle point custom photo
+  /api/recycle_point/{id}/approve:
+    patch:
+      tags:
+        - recycle point
+      summary: Moderate offered recycle point (only for admins)
+  /api/recycle_point/{id}/review:
+    get:
+      tags:
+        - review
+      summary: Return all review about recycle point
+    post:
+      tags:
+        - review
+      summary: Create comment about recycle point
+  /api/review/{id}:
+    get:
+      tags:
+        - review
+      summary: Return cartain review by id
+    delete:
+      tags:
+        - review
+      summary: Delete certain review by id (only for admins)
+  /api/rubbish_type/total:
+    get:
+      tags:
+        - rubbish type
+      summary: Return total amount of rubbish taken off
+  /api/rubbish_type/{id}:
+    get:
+      tags:
+        - rubbish type
+      summary: Return certain rubbish type by id
+    delete:
+      tags:
+        - rubbish type
+      summary: Delete rubbish type by id
+  /api/rubbish_type:
+    post:
+      tags:
+        - rubbish type
+      summary: Add new rubbish type
+  /api/take_off/{id}:
+    get:
+      tags:
+        - take off
+      summary: Get info about take off by id
+    delete:
+      tags:
+        - take off
+      summary: Delete certain take off by id
+  /api/take_off:
+    post:
+      tags:
+        - take off
+      summary: Add new take off
+components:
+  schemas:
+    OutputUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Jack
+        lastName:
+          type: String
+          example: Sparrow
+        email:
+          type: string
+          example: jacksparrow@gmail.com
+        dateOfBirth:
+          type: string
+          example: 1999-04-11
+        dateOfRegistration:
+          type: string
+          example: 2001-08-09
+        userImage:
+          type: string
+          example: sparrow
+        emailVerified:
+          type: boolean
+          example: true
+        timesChanged:
+          type: integer
+          example: 0
+        role:
+          type: integer
+          example: 1
+    InputUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Jack
+        lastName:
+          type: string
+          example: Sparrow
+        email:
+          type: string
+          example: jacksparrow@gmail.com
+        password:
+          type: string
+          example: jacksparrow
+        dateOfBirth:
+          type: string
+          example: 1998-09-11
+        userImage:
+          type: string
+          example: sparrow
+    AuthUser:
+      type: object
+      properties:
+        email:
+          type: string
+          example: jacksparrow@gmail.com
+        password:
+          type: string
+          example: jacksparrow
+    UserTakeoff:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        idUser:
+          type: integer
+          example: 15
+        idRecyclePoint:
+          type: integer
+          example: 11
+        idRubbishType:
+          type: integer
+          example: 22
+        amountInGrams:
+          type: double
+          example: 300.0
+        datetime:
+          type: string
+          example: 2023-11-15
+        percentRating:
+          type: integer
+          example: 70
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjE1LCJpc3MiOiJjb20uZXhhbXBsZS5lY28tYXBpIiwidGNoIjowLCJyaWQiOjF9.0vcPyDpvhyy4hWP2-jO8ZmoI1wSK7O34BHhBwn-9FTU
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization

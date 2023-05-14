@@ -1,8 +1,11 @@
 package com.example.utils
 
-enum class Errors(val message: String, val statusCode: Int = 500) {
+enum class Errors(
+    val message: String,
+    val statusCode: Int = 500,
+) {
     DATABASE_ERROR(
-        message ="An error occurred trying to reach database",
+        message = "An error occurred trying to reach database",
     ),
     EMPTY_DATA(
         message = "Empty result dataset",
@@ -13,7 +16,7 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
     ),
     NOT_FOUND(
         message = "Entity you're looking for cannot be found",
-        statusCode = 200
+        statusCode = 202
     ),
     UPDATE_FAILED(
         message = "Failed to update database entry",
@@ -53,6 +56,11 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
         message = "Method not found. Check url and HTTP method and " +
                 "retry",
         statusCode = 405
-    )
+    );
+
+    /*fun wrapError(func: String): Errors {
+        message.plus(". `$func`")
+        return this
+    }*/
 
 }
