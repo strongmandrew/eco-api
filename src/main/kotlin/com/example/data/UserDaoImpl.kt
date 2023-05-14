@@ -11,6 +11,7 @@ import com.example.utils.Errors
 import com.example.utils.ServiceResult
 import com.example.utils.toDatabaseDate
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UserDaoImpl(
     private val passwordEncrypt: PasswordEncrypt,
@@ -58,6 +59,17 @@ class UserDaoImpl(
             else ServiceResult.Error(Errors.EMAIL_NOT_VERIFIED)
         }
     } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
+    }
+
+    override suspend fun deleteUser(idUser: Int) = try {
+        dbQuery {
+            if (UserTable.deleteWhere { UserTable.id eq idUser } > 0)
+                ServiceResult.Success(true)
+            else ServiceResult.Error(Errors.DELETE_FAILED)
+        }
+    }
+    catch (e: Exception) {
         ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 

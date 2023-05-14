@@ -84,6 +84,7 @@ val userModule = module {
     single { GetUserByEmail(get()) }
     single { AuthorizeUser(get(), get(), get()) }
     single { ChangePasswordUseCase(get(), get(), get()) }
+    single { DeleteUser(get()) }
 }
 
 val rubbishTypeModule = module {

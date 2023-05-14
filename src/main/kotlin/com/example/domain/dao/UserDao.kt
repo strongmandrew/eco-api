@@ -17,4 +17,5 @@ interface UserDao: UserRegistration, UserValidation, UserProfile {
 
     suspend fun incrementTimesChanged(idUser: Int, previousTimesChanged: Int):
             ServiceResult<Boolean>
+    suspend fun deleteUser(idUser: Int): ServiceResult<Boolean>
 }

@@ -15,10 +15,12 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-  - url: http://127.0.0.1/api
+  - url: http://127.0.0.1:8080/api
 tags:
   - name: user
     description: Operations about user
+  - name: user (admin)
+    description: Operations about user by admin role
   - name: recycle point
     description: Info about recycle points
   - name: review
@@ -28,7 +30,7 @@ tags:
   - name: take off
     description: Info about user rubbish take offs
 paths:
-  /api/user:
+  /user:
     get:
       security:
         - ApiKeyAuth: []
@@ -46,12 +48,47 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/OutputUser'
+        '401':
+          description: You don't have permissions for that action
+        '500':
+          description: Internal server error
         default:
           description: According to response body error
       tags:
         - user
       summary: Search for user by email
-  /api/user/register:
+
+    delete:
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: User id to delete
+      responses:
+        '200':
+          description: Deletion success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        '401':
+          description: You don't have permissions for that action
+        '500':
+          description: Internal server error
+        default:
+          description: According to response body error
+      tags:
+        - user (admin)
+      summary: Delete certain user
+  /user/register:
     post:
       requestBody:
         description: User credentials
@@ -69,10 +106,12 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/OutputUser'
+        '500':
+          description: Internal server error
         default:
           description: According to response body error
       summary: Register user
-  /api/user/authorize:
+  /user/authorize:
     post:
       requestBody:
         description: User's email and password
@@ -88,13 +127,15 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/Token'
+        '500':
+          description: Internal server error
         default:
           description: According to response body error
       tags:
         - user
       summary: Authorize user by credentials
 
-  /api/user/validate/send:
+  /user/validate/send:
     post:
       requestBody:
         description: User email to send code to
@@ -118,12 +159,14 @@ paths:
                   data:
                     type: boolean
                     example: true
+        '500':
+          description: Internal server error
         default:
           description: According to response body error
       tags:
         - user
       summary: Endpoint to send approval code to user email
-  /api/user/validate/approve:
+  /user/validate/approve:
     post:
       requestBody:
         description: User email and input code
@@ -146,12 +189,14 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/Token'
+        '500':
+          description: Internal server error
         default:
           description: According to response body error
       tags:
         - user
       summary: Compares input code with the sent one
-  /api/user/take_off:
+  /user/take_off:
     get:
       security:
         - ApiKeyAuth: []
@@ -162,13 +207,17 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/UserTakeoff'
+        '401':
+          description: You don't have permissions for that action
+        '500':
+          description: Internal server error
         default:
           description: According to response body error
       tags:
         - user
         - take off
       summary: Returns all user rubbish take-offs
-  /api/user/take_off/total:
+  /user/take_off/total:
     get:
       security:
         - ApiKeyAuth: []
@@ -182,29 +231,60 @@ paths:
                 properties:
                   data:
                     type: double
-                    example: 1700.0
+                    example: 1700.1
+        '401':
+          description: You don't have permissions for that action
+        '500':
+          description: Internal server error
         default:
           description: According to response body error
       tags:
         - user
         - take off
       summary: Returns total amount of user rubbish take-offs
-  /api/recycle_point/photo/{path}:
+  /user/profile/change_password:
+    patch:
+      tags:
+        - user
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        description: Triple of password to change
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/ChangePassword'
+      responses:
+        '200':
+          description: Updated token
+          content:
+            application/json:
+              schema:
+              $ref: '#components/schemas/Token'
+        '401':
+          description: You don't have permissions for that action
+        '500':
+          description: Internal server error
+        default:
+          description: According to response body error
+
+  /recycle_point/photo/{path}:
     get:
       tags:
         - recycle point
       summary: Return custom recycle point photo
-  /api/recycle_point?query={}:
+  /recycle_point?query={}:
     get:
       tags:
         - recycle point
       summary: Search by recycle point address
-  /api/recycle_point:
+  /recycle_point:
     post:
       tags:
         - recycle point
       summary: Offer new recycle point to moderate
-  /api/recycle_point/{id}:
+  /recycle_point/{id}:
     get:
       tags:
         - recycle point
@@ -213,17 +293,17 @@ paths:
       tags:
         - recycle point
       summary: Delete recycle point by id
-  /api/recycle_point/{id}/photo:
+  /recycle_point/{id}/photo:
     patch:
       tags:
         - recycle point
       summary: Add recycle point custom photo
-  /api/recycle_point/{id}/approve:
+  /recycle_point/{id}/approve:
     patch:
       tags:
         - recycle point
       summary: Moderate offered recycle point (only for admins)
-  /api/recycle_point/{id}/review:
+  /recycle_point/{id}/review:
     get:
       tags:
         - review
@@ -232,7 +312,7 @@ paths:
       tags:
         - review
       summary: Create comment about recycle point
-  /api/review/{id}:
+  /review/{id}:
     get:
       tags:
         - review
@@ -241,12 +321,12 @@ paths:
       tags:
         - review
       summary: Delete certain review by id (only for admins)
-  /api/rubbish_type/total:
+  /rubbish_type/total:
     get:
       tags:
         - rubbish type
       summary: Return total amount of rubbish taken off
-  /api/rubbish_type/{id}:
+  /rubbish_type/{id}:
     get:
       tags:
         - rubbish type
@@ -255,12 +335,12 @@ paths:
       tags:
         - rubbish type
       summary: Delete rubbish type by id
-  /api/rubbish_type:
+  /rubbish_type:
     post:
       tags:
         - rubbish type
       summary: Add new rubbish type
-  /api/take_off/{id}:
+  /take_off/{id}:
     get:
       tags:
         - take off
@@ -269,13 +349,26 @@ paths:
       tags:
         - take off
       summary: Delete certain take off by id
-  /api/take_off:
+  /take_off:
     post:
       tags:
         - take off
       summary: Add new take off
 components:
   schemas:
+    ChangePassword:
+      type: object
+      properties:
+        previousPassword:
+          type: string
+          example: 12345
+          required: false
+        newPassword1:
+          type: string
+          example: 12222
+        newPassword2:
+          type: string
+          example: 12222
     OutputUser:
       type: object
       properties:

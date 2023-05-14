@@ -21,6 +21,9 @@ enum class Errors(
     UPDATE_FAILED(
         message = "Failed to update database entry",
     ),
+    DELETE_FAILED(
+      message = "Failed to delete database entry"
+    ),
     FILE_SYSTEM_ERROR(
         message = "Failed to upload a file"
     ),

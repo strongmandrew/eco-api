@@ -22,6 +22,7 @@ fun Route.userRoute() {
     val getUserByEmail: GetUserByEmail by inject()
     val authorizeUser: AuthorizeUser by inject()
     val changePasswordUseCase: ChangePasswordUseCase by inject()
+    val deleteUser: DeleteUser by inject()
 
     val getAllUserTakeOffs: GetAllUserTakeOffs by inject()
     val getTotalUserTakeOff: GetTotalUserTakeOff by inject()
@@ -85,6 +86,23 @@ fun Route.userRoute() {
                     call.respond(
                         message = result,
                         status = HttpStatusCode.fromValue(result.statusCode)
+                    )
+                }
+            }
+        }
+
+        route("/{id}") {
+
+            authenticate("admin-auth") {
+                delete {
+                    val id = call.parameters["id"]
+
+                    val response = deleteUser(id?.toInt() ?:
+                    DEFAULT_ID)
+
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
                     )
                 }
             }
