@@ -61,6 +61,25 @@ class UserDaoImpl(
         ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
+    override suspend fun incrementTimesChanged(
+        idUser: Int,
+        previousTimesChanged: Int,
+    ) = try {
+        dbQuery {
+            if (UserTable.update(
+                    where = { UserTable.id eq idUser },
+                    body = {
+                        it[timesChanged] =
+                            previousTimesChanged + 1
+                    }
+                ) > 0
+            ) ServiceResult.Success(true)
+            else ServiceResult.Error(Errors.UPDATE_FAILED)
+        }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
+    }
+
     override suspend fun checkUserCredentials(
         email: String,
         password: String,
@@ -162,6 +181,23 @@ class UserDaoImpl(
     } catch (e: Exception) {
         ServiceResult.Error(Errors.DATABASE_ERROR)
     }
+
+    override suspend fun changeUserPasswordById(
+        idUser: Int,
+        password: String,
+    ) =
+        try {
+            dbQuery {
+                if (UserTable.update(
+                        where = { UserTable.id eq idUser },
+                        body = { it[UserTable.password] = password }
+                    ) > 0
+                ) ServiceResult.Success(true)
+                else ServiceResult.Error(Errors.UPDATE_FAILED)
+            }
+        } catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
 
     override suspend fun emailDoesNotExist(
         email: String,

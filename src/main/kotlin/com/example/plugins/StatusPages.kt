@@ -1,6 +1,7 @@
 package com.example.plugins
 
 import com.example.domain.BADREQUESTResponse
+import com.example.domain.INCORRECTMETHODResponse
 import com.example.domain.NOTALLOWEDResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,6 +15,9 @@ fun Application.configureStatusPages() {
         }
         status(HttpStatusCode.BadRequest) { call, _ ->
             call.respond(BADREQUESTResponse)
+        }
+        status(HttpStatusCode.MethodNotAllowed) { call, _ ->
+            call.respond(INCORRECTMETHODResponse)
         }
     }
 }

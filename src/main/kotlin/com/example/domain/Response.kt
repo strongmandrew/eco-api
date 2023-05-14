@@ -52,3 +52,28 @@ val BADREQUESTResponse = with(Errors.BAD_INPUT) {
         statusCode = statusCode
     )
 }
+
+val PASSWORDSMISMATCHResponse = with(Errors.PASSWORDS_MISMATCH) {
+    Response<String>(
+        error = ErrorResponse(
+            name, message
+        ),
+        statusCode = statusCode
+    )
+}
+
+val INCORRECTPASSWORDResponse = with(Errors.INCORRECT_PASSWORD) {
+    Response<String>(
+        error = ErrorResponse(
+            name, message
+        ),
+        statusCode = statusCode
+    )
+}
+
+val INCORRECTMETHODResponse = with (Errors.METHOD_NOT_ALLOWED) {
+    Response<String>(
+        error = ErrorResponse(name, message),
+        statusCode = statusCode
+    )
+}

@@ -80,9 +80,10 @@ val userModule = module {
     single { RegisterUser(get()) }
     single { SetOrUpdateValidationCode(get()) }
     single { SendValidation(get(), get(), get()) }
-    single { ApproveValidation(get()) }
+    single { ApproveValidation(get(), get()) }
     single { GetUserByEmail(get()) }
     single { AuthorizeUser(get(), get(), get()) }
+    single { ChangePasswordUseCase(get(), get(), get()) }
 }
 
 val rubbishTypeModule = module {

@@ -40,6 +40,19 @@ enum class Errors(val message: String, val statusCode: Int = 500) {
     EMAIL_ALREADY_EXISTS(
         message = "User with the same email already exists",
         statusCode = 200
+    ),
+    PASSWORDS_MISMATCH(
+        message = "Input passwords are not the same",
+        statusCode = 402
+    ),
+    INCORRECT_PASSWORD(
+        message = "Previous password is incorrect",
+        statusCode = 402
+    ),
+    METHOD_NOT_ALLOWED(
+        message = "Method not found. Check url and HTTP method and " +
+                "retry",
+        statusCode = 405
     )
 
 }
