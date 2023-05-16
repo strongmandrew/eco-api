@@ -18,5 +18,6 @@ enum class Endpoint(val path: String) {
     TOTAL("/total"),
     PROFILE("/profile"),
     CHANGE_PASSWORD("/change_password"),
-    BLACKLIST("/blacklist")
+    BLACKLIST("/blacklist"),
+    ACCEPTED("/accepted")
 }

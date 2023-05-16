@@ -170,13 +170,31 @@ class RecyclePointDaoImpl : RecyclePointDao {
         ServiceResult.Error(Errors.FILE_SYSTEM_ERROR)
     }
 
+
+    override suspend fun addAcceptedRubbishType(
+        idRecyclePoint: Int,
+        type: Int,
+    ) = try {
+        dbQuery {
+            if (RecyclePointRubbishTypeTable.insert {
+                    it[recyclePoint] = idRecyclePoint
+                    it[rubbishType] = type
+                }.resultedValues.isNullOrEmpty())
+                ServiceResult.Error(Errors.INSERT_FAILED)
+            else ServiceResult.Success(true)
+        }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
+    }
+
     override suspend fun getPointsFilteredByType(types: List<String>):
             ServiceResult<List<RecyclePoint>> = try {
         dbQuery {
             val points = RecyclePointRubbishTypeTable
                 .innerJoin(RecyclePointTable)
                 .innerJoin(RubbishTypeTable).select {
-                    RubbishTypeTable.type inList types
+                    RubbishTypeTable.type.lowerCase() inList types.map { it
+                        .lowercase() }
                 }.toList().map { it.toRecyclePoint() }
             ServiceResult.Success(points)
         }

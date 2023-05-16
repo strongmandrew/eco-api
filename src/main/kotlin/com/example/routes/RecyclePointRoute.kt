@@ -32,6 +32,8 @@ fun Route.recyclePointRoute() {
     val getReviewsByPointId: GetReviewsByPointId by inject()
     val insertReview: InsertReview by inject()
 
+    val addAcceptedRubbishType: AddAcceptedRubbishType by inject()
+
     route(Endpoint.RECYCLE_POINT.path) {
 
         authenticate("user-auth") {
@@ -126,6 +128,24 @@ fun Route.recyclePointRoute() {
             }
 
             authenticate("user-auth") {
+                route(Endpoint.ACCEPTED.path) {
+                    post {
+                        val id = call.parameters["id"]
+
+                        val type = call.request
+                            .queryParameters["type"] ?: return@post
+
+                        val response = addAcceptedRubbishType(
+                            id?.toInt() ?: DEFAULT_ID,
+                            type
+                        )
+                        call.respond(
+                            message = response,
+                            status = HttpStatusCode.fromValue(response.statusCode)
+                        )
+                    }
+                }
+
                 get {
 
                     val id = call.parameters["id"]

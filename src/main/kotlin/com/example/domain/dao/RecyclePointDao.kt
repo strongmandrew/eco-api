@@ -19,4 +19,8 @@ interface RecyclePointDao {
     suspend fun insertPhotoPath(idPoint: Int, photoPath: String): ServiceResult<Boolean>
     suspend fun getPointsFilteredByType(types: List<String>):
             ServiceResult<List<RecyclePoint>>
+
+    suspend fun addAcceptedRubbishType(
+        idRecyclePoint: Int, type: Int
+    ): ServiceResult<Boolean>
 }

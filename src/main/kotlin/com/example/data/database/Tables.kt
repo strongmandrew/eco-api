@@ -88,5 +88,6 @@ object RubbishTypeTable: IntIdTable("rubbish_type") {
 
 object RecyclePointRubbishTypeTable: IntIdTable("recycle_point_rubbish_type") {
     val recyclePoint = reference("recycle_point_id", RecyclePointTable.id)
-    val rubbishType = reference("rubbish_type_id", RubbishTypeTable.id)
+    val rubbishType = reference("rubbish_type_id", RubbishTypeTable
+        .id)
 }

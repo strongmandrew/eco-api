@@ -26,6 +26,18 @@ class RubbishTypeDaoImpl : RubbishTypeDao {
         ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 
+    override suspend fun getRubbishTypeByName(name: String) = try {
+        dbQuery {
+            RubbishTypeTable.select {
+                RubbishTypeTable.type.lowerCase() eq name.lowercase()
+            }.singleOrNull()?.let {
+                ServiceResult.Success(it.toRubbishType())
+            } ?: ServiceResult.Error(Errors.NOT_FOUND)
+        }
+    } catch (e: Exception) {
+        ServiceResult.Error(Errors.DATABASE_ERROR)
+    }
+
     override suspend fun getRubbishTypeById(
         rubbishTypeId: Int,
     ) = try {

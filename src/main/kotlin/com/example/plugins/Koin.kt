@@ -36,6 +36,7 @@ fun Application.configureKoin() {
 
 val recyclePointModule = module {
     single<RecyclePointDao> { RecyclePointDaoImpl() }
+    single<RubbishTypeDao> { RubbishTypeDaoImpl() }
 
     factory { RecyclePointFileNameGenerator() }
 
@@ -47,6 +48,7 @@ val recyclePointModule = module {
     single { DeleteRecyclePoint(get()) }
     single { GetRecyclePointByQuery(get()) }
     single { GetPointsFilteredByType(get()) }
+    single { AddAcceptedRubbishType(get(), get()) }
 }
 
 val reviewModule = module {
