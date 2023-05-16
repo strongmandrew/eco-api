@@ -9,4 +9,6 @@ interface ReviewDao {
             ServiceResult<Review>
     suspend fun deleteReviewById(idReview: Int): ServiceResult<Boolean>
     suspend fun getReviewById(idReview: Int): ServiceResult<Review>
+
+    suspend fun getAllUserReviews(idUser: Int): ServiceResult<List<Review>>
 }

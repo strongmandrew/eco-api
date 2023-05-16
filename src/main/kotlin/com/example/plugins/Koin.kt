@@ -69,6 +69,8 @@ val newsModule = module {
 
 val userModule = module {
 
+    single<ReviewDao> { ReviewDaoImpl() }
+
     factory { PasswordEncrypt() }
 
     single<UserDao> { UserDaoImpl(get()) }
@@ -92,6 +94,8 @@ val userModule = module {
     single { AddToBlacklist(get(), get()) }
     single { RemoveFromBlacklist(get()) }
     single { GetAllBlacklisted(get()) }
+
+    single { GetAllUserReviews(get()) }
 }
 
 val rubbishTypeModule = module {

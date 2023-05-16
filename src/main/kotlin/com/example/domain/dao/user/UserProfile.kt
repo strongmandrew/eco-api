@@ -6,4 +6,5 @@ interface UserProfile {
 
     suspend fun changeUserPasswordById(idUser: Int, password: String):
             ServiceResult<Boolean>
+
 }

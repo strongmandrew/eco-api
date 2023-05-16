@@ -12,6 +12,21 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class ReviewDaoImpl : ReviewDao {
 
+    override suspend fun getAllUserReviews(idUser: Int) =
+        try {
+            dbQuery {
+                val reviews = ReviewTable
+                    .select { ReviewTable.idUser eq idUser }
+                    .toList().map {
+                        it.toReview()
+                    }
+                ServiceResult.Success(reviews)
+            }
+        }
+        catch (e: Exception) {
+            ServiceResult.Error(Errors.DATABASE_ERROR)
+        }
+
     override suspend fun getReviewsByPointId(id: Int) = try {
         val points = dbQuery {
             ReviewTable.join(
