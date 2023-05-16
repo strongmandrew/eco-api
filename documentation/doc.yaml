@@ -311,12 +311,19 @@ paths:
               $ref: '#components/schemas/Token'
         default:
           description: According to response body error
-  /user/review:
+  /user/{id}/review:
     get:
       tags:
         - review
         - user
       summary: Returns all user reviews
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain user id
       security:
         - ApiKeyAuthUser: [ ]
       responses:
