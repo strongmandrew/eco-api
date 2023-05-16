@@ -390,6 +390,41 @@ paths:
         - recycle point
       summary: Offer new recycle point
 
+  /recycle_point/{id}/accepted:
+    post:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain recycle point id
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+          description: Rubbish type name
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '201':
+          description: Adding success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
+      tags:
+        - recycle point
+        - rubbish type
+      summary: Adds recycle point accepted rubbish type
+
   /recycle_point/{id}:
     get:
       parameters:
@@ -500,7 +535,7 @@ paths:
           description: According to response body error
       tags:
         - recycle point
-      summary: Approves offered recycle points
+      summary: Changes certain recycle point approval to opposite
 
   /recycle_point/{id}/review:
     get:

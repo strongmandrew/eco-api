@@ -22,7 +22,7 @@ class AddAcceptedRubbishType(
                 )) {
                     is ServiceResult.Success -> Response(
                         data = insert.data,
-                        statusCode = 200
+                        statusCode = 201
                     )
 
                     is ServiceResult.Error -> Response(
