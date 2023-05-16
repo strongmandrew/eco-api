@@ -311,6 +311,23 @@ paths:
               $ref: '#components/schemas/Token'
         default:
           description: According to response body error
+  /user/review:
+    get:
+      tags:
+        - review
+        - user
+      summary: Returns all user reviews
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '200':
+          description: List of user reviews
+          content:
+            application/json:
+              schema:
+              $ref: '#components/schemas/OutputReview'
+        default:
+          description: According to response body error
 
   /recycle_point/photo/{path}:
     get:

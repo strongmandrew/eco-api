@@ -97,6 +97,22 @@ fun Route.userRoute() {
             }
         }
 
+        authenticate("user-auth") {
+            route(Endpoint.REVIEW.path) {
+                get {
+                    val principal = call.principal<JWTPrincipal>()
+                    val uid =
+                        principal!!.payload.getClaim("uid").asInt()
+                    val response =
+                        getAllUserReviews(uid)
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
+                    )
+                }
+            }
+        }
+
         authenticate("admin-auth") {
 
             route(Endpoint.BLACKLIST.path) {
@@ -132,20 +148,6 @@ fun Route.userRoute() {
         }
 
         route("/{id}") {
-
-            authenticate("user-auth") {
-                route(Endpoint.REVIEW.path) {
-                    get {
-                        val id = call.parameters["id"]
-                        val response =
-                            getAllUserReviews(id?.toInt() ?: DEFAULT_ID)
-                        call.respond(
-                            message = response,
-                            status = HttpStatusCode.fromValue(response.statusCode)
-                        )
-                    }
-                }
-            }
 
             authenticate("admin-auth") {
                 delete {
