@@ -10,9 +10,14 @@ class InsertReview(
     private val reviewDao: ReviewDao
 ) {
 
-    suspend operator fun invoke(review: Review, idPoint: Int): Response<Review> {
+    suspend operator fun invoke(
+        review: Review,
+        idPoint: Int,
+        idUser: Int
+    ): Response<Review> {
 
-        return when (val result = reviewDao.postReview(review, idPoint)) {
+        return when (val result = reviewDao.postReview(review,
+            idPoint, idUser)) {
 
             is ServiceResult.Success -> {
                 Response(

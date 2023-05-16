@@ -65,6 +65,7 @@ object ReviewTable: IntIdTable("review") {
     val review = varchar("review", 512)
     val dateCreated = datetime("date_of").clientDefault { LocalDateTime.now() }
     var recyclePoint = reference("recycle_point_id", RecyclePointTable.id)
+    val idUser = reference("user_id", UserTable.id)
 }
 
 object UserTakeOffTable: IntIdTable("user_rubbish_take_off") {

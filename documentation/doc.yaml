@@ -504,23 +504,107 @@ paths:
 
   /recycle_point/{id}/review:
     get:
+      security:
+        - ApiKeyAuthUser: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain recycle point id
+      responses:
+        '200':
+          description: List of recycle point reviews
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputReview'
+        default:
+          description: According to response body error
       tags:
+        - recycle point
         - review
-      summary: Return all review about recycle point
+      summary: Returns all reviews about recycle point
+
     post:
+      security:
+        - ApiKeyAuthUser: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/InputReview'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain recycle point id
+      responses:
+        '201':
+          description: Review created
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputReview'
+        default:
+          description: According to response body error
       tags:
+        - recycle point
         - review
-      summary: Create comment about recycle point
+      summary: Creates review about recycle point
 
   /review/{id}:
     get:
+      security:
+        - ApiKeyAuthUser: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain review id
       tags:
         - review
-      summary: Return cartain review by id
+      summary: Returns certain review by id
+      responses:
+        '200':
+          description: Certain review
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputReview'
+        default:
+          description: According to response body error
     delete:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain review id
+      responses:
+        '200':
+          description: Deletion success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
       tags:
         - review
-      summary: Delete certain review by id (only for admins)
+      summary: Deletes certain review by id
 
   /rubbish_type/total:
     get:
@@ -713,6 +797,30 @@ components:
         type:
           type: string
           example: Terminal
+    InputReview:
+      type: object
+      properties:
+        reviewText:
+          type: string
+          example: I liked that a lot!
+    OutputReview:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        reviewText:
+          type: string
+          example: Very convenient location.
+        dateOf:
+          type: string
+          example: 2022-12-09
+        pointId:
+          type: integer
+          example: 14
+        userId:
+          type: integer
+          example: 6
 
     Token:
       type: object

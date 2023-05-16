@@ -62,11 +62,13 @@ class ReviewDaoImpl : ReviewDao {
     override suspend fun postReview(
         review: Review,
         idPoint: Int,
+        idUser: Int
     ) = try {
         dbQuery {
             ReviewTable.insert {
                 it[ReviewTable.review] = review.reviewText
                 it[recyclePoint] = idPoint
+                it[ReviewTable.idUser] = idUser
             }.resultedValues?.singleOrNull()?.let {
                 ServiceResult.Success(it.toReview())
             } ?: ServiceResult.Error(Errors.EMPTY_DATA)
