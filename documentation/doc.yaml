@@ -78,6 +78,78 @@ paths:
       tags:
         - user
       summary: Delete certain user
+  /user/blacklist:
+    get:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      responses:
+        '200':
+          description: List of blacklisted emails
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: jacksparrow@gmail.com
+        default:
+          description: According to response body error
+      tags:
+        - user
+      summary: Returns all blacklisted user
+    post:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+          description: User email to blacklist
+      responses:
+        '200':
+          description: User blacklisting success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
+      tags:
+        - user
+      summary: Blacklists certain user email (user must be deleted in advance)
+    delete:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+          description: User email at blacklist
+      responses:
+        '200':
+          description: Blacklisting success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        default:
+          description: According to response body error
+      tags:
+        - user
+      summary: Removes certain email from blacklist
   /user/register:
     post:
       requestBody:
@@ -449,6 +521,7 @@ paths:
       tags:
         - review
       summary: Delete certain review by id (only for admins)
+
   /rubbish_type/total:
     get:
       tags:
