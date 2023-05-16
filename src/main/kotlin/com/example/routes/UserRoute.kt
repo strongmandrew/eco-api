@@ -27,6 +27,10 @@ fun Route.userRoute() {
     val getAllUserTakeOffs: GetAllUserTakeOffs by inject()
     val getTotalUserTakeOff: GetTotalUserTakeOff by inject()
 
+    val getAllBlacklisted: GetAllBlacklisted by inject()
+    val addToBlackListEmail: AddToBlacklist by inject()
+    val removeEmailFromBlackList: RemoveFromBlacklist by inject()
+
     route(Endpoint.USER.path) {
 
         route(Endpoint.REGISTER.path) {
@@ -86,6 +90,39 @@ fun Route.userRoute() {
                     call.respond(
                         message = result,
                         status = HttpStatusCode.fromValue(result.statusCode)
+                    )
+                }
+            }
+        }
+
+        authenticate("admin-auth") {
+            route(Endpoint.BLACKLIST.path) {
+
+                get {
+                    val response = getAllBlacklisted()
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
+                    )
+                }
+
+                post {
+                    val email = call.request.queryParameters["email"]
+                        ?: return@post
+                    val response = addToBlackListEmail(email)
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
+                    )
+                }
+
+                delete {
+                    val email = call.request.queryParameters["email"]
+                        ?: return@delete
+                    val response = removeEmailFromBlackList(email)
+                    call.respond(
+                        message = response,
+                        status = HttpStatusCode.fromValue(response.statusCode)
                     )
                 }
             }

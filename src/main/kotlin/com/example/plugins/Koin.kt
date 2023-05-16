@@ -51,7 +51,7 @@ val recyclePointModule = module {
 
 val reviewModule = module {
 
-    single<ReviewDao> {ReviewDaoImpl()}
+    single<ReviewDao> { ReviewDaoImpl() }
 
     single { GetReviewsByPointId(get()) }
     single { GetReviewById(get()) }
@@ -70,6 +70,7 @@ val userModule = module {
     factory { PasswordEncrypt() }
 
     single<UserDao> { UserDaoImpl(get()) }
+    single<BlacklistDao> { BlacklistDaoImpl() }
 
     val session = Session.getInstance(EmailCredentials.props,
         EmailAuthenticator().invoke())
@@ -85,6 +86,10 @@ val userModule = module {
     single { AuthorizeUser(get(), get(), get()) }
     single { ChangePasswordUseCase(get(), get(), get()) }
     single { DeleteUser(get()) }
+
+    single { AddToBlacklist(get(), get()) }
+    single { RemoveFromBlacklist(get()) }
+    single { GetAllBlacklisted(get()) }
 }
 
 val rubbishTypeModule = module {

@@ -17,5 +17,6 @@ enum class Endpoint(val path: String) {
     TAKE_OFF("/take_off"),
     TOTAL("/total"),
     PROFILE("/profile"),
-    CHANGE_PASSWORD("/change_password")
+    CHANGE_PASSWORD("/change_password"),
+    BLACKLIST("/blacklist")
 }

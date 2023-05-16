@@ -59,7 +59,11 @@ enum class Errors(
         message = "Method not found. Check url and HTTP method and " +
                 "retry",
         statusCode = 405
-    );
+    ),
+    USER_EXISTS(
+        message = "Existing user email cannot be blacklisted",
+        statusCode = 202
+    )
 
     /*fun wrapError(func: String): Errors {
         message.plus(". `$func`")

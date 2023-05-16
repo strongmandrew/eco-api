@@ -77,3 +77,10 @@ val INCORRECTMETHODResponse = with (Errors.METHOD_NOT_ALLOWED) {
         statusCode = statusCode
     )
 }
+
+val USEREXISTSResponse = with (Errors.USER_EXISTS) {
+    Response<Boolean>(
+        error = ErrorResponse(name, message),
+        statusCode = statusCode
+    )
+}
