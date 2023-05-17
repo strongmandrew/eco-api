@@ -15,7 +15,7 @@ class UserTakeOffDaoImpl : UserTakeOffDao {
     ) = try {
         dbQuery {
             UserTakeOffTable.insert {
-                it[this.idUser] = takeOff.idUser
+                it[this.idUser] = takeOff.idUser!!
                 it[this.idRecyclePoint] = takeOff.idRecyclePoint
                 it[this.idRubbishType] = takeOff.idRubbishType
                 it[this.amountInGrams] = takeOff.amountInGrams

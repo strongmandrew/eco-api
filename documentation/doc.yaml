@@ -797,7 +797,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#components/schemas/InputTakeoff'
+              $ref: '#components/schemas/InputTakeOff'
       tags:
         - take off
         - recycle point
@@ -817,7 +817,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/OutputTakeoff'
+                $ref: '#components/schemas/OutputTakeOff'
 components:
   schemas:
     InputTakeOff:
