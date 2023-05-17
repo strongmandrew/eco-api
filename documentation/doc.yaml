@@ -332,7 +332,7 @@ paths:
           content:
             application/json:
               schema:
-              $ref: '#components/schemas/OutputReview'
+                $ref: '#components/schemas/OutputReview'
         default:
           description: According to response body error
 
@@ -667,39 +667,221 @@ paths:
 
   /rubbish_type/total:
     get:
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '200':
+          description: Total amount
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: double
+                    example: 300.1
+        default:
+          description: According to response body error
       tags:
         - rubbish type
-      summary: Return total amount of rubbish taken off
+      summary: Returns total amount of rubbish taken off
+
   /rubbish_type/{id}:
     get:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      responses:
+        '200':
+          description: Rubbish type description
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputRubbishType'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain rubbish type id
       tags:
         - rubbish type
-      summary: Return certain rubbish type by id
+      summary: Returns certain rubbish type by id
     delete:
+      responses:
+        '200':
+          description: Deletion success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain rubbish type id
+      security:
+        - ApiKeyAuthAdmin: [ ]
       tags:
         - rubbish type
-      summary: Delete rubbish type by id
+      summary: Deletes rubbish type by id
+
   /rubbish_type:
     post:
+      responses:
+        '201':
+          description: Added rubbish type
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputRubbishType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/InputRubbishType'
+      security:
+        - ApiKeyAuthAdmin: [ ]
       tags:
         - rubbish type
-      summary: Add new rubbish type
+      summary: Adds new rubbish type
+
   /take_off/{id}:
     get:
       tags:
         - take off
-      summary: Get info about take off by id
+      summary: Returns info about take off by id
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain take off id
     delete:
+      security:
+        - ApiKeyAuthAdmin: [ ]
+      responses:
+        '200':
+          description: Deletion success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain take off id
       tags:
         - take off
-      summary: Delete certain take off by id
-  /take_off:
+      summary: Deletes certain take off by id
+
+  /recycle_point/{id}/take_off:
     post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/InputTakeoff'
       tags:
         - take off
-      summary: Add new take off
+        - recycle point
+      summary: Adds new take off
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Certain recycle point id
+      security:
+        - ApiKeyAuthUser: [ ]
+      responses:
+        '201':
+          description: Newly created take off
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/OutputTakeoff'
 components:
   schemas:
+    InputTakeOff:
+      type: object
+      properties:
+        idRubbishType:
+          type: integer
+          example: 4
+        amountInGrams:
+          type: double
+          example: 400.2
+        percentRating:
+          type: integer
+          example: 99
+
+    OutputTakeOff:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        idUser:
+          type: integer
+          example: 1
+        idRecyclePoint:
+          type: integer
+          example: 16
+        idRubbishType:
+          type: integer
+          example: 4
+        amountInGrams:
+          type: double
+          example: 400.2
+        datetime:
+          type: string
+          example: 2021-10-14
+        percentRating:
+          type: integer
+          example: 99
+
+    OutputRubbishType:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        type:
+          type: string
+          example: Plastic
+        description:
+          type: string
+          example: Plastic things that should be recycled
+    InputRubbishType:
+      type: object
+      properties:
+        type:
+          type: string
+          example: Plastic
+          required: true
+        description:
+          type: string
+          example: Plastic things that should be recycled
+          required: true
+
     ChangePassword:
       type: object
       properties:
@@ -773,30 +955,6 @@ components:
         password:
           type: string
           example: jacksparrow
-    UserTakeoff:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        idUser:
-          type: integer
-          example: 15
-        idRecyclePoint:
-          type: integer
-          example: 11
-        idRubbishType:
-          type: integer
-          example: 22
-        amountInGrams:
-          type: double
-          example: 300.0
-        datetime:
-          type: string
-          example: 2023-11-15
-        percentRating:
-          type: integer
-          example: 70
 
     InputRecyclePoint:
       type: object
@@ -877,9 +1035,6 @@ components:
         pointId:
           type: integer
           example: 14
-        userId:
-          type: integer
-          example: 6
 
     Token:
       type: object

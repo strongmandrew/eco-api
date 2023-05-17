@@ -97,5 +97,6 @@ class ReviewDaoImpl : ReviewDao {
         id = this[ReviewTable.id].value,
         reviewText = this[ReviewTable.review],
         dateOf = this[ReviewTable.dateCreated].toString(),
+        pointId = this[ReviewTable.recyclePoint].value
     )
 }

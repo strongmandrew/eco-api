@@ -3,8 +3,10 @@ package com.example.routes
 import com.example.domain.usecase.recyclePoint.*
 import com.example.domain.usecase.review.GetReviewsByPointId
 import com.example.domain.usecase.review.InsertReview
+import com.example.domain.usecase.userTakeOff.TakeOffRubbish
 import com.example.entity.RecyclePoint
 import com.example.entity.Review
+import com.example.entity.UserTakeOff
 import com.example.utils.Const
 import com.example.utils.Const.DEFAULT_ID
 import io.ktor.http.*
@@ -28,6 +30,7 @@ fun Route.recyclePointRoute() {
     val deleteRecyclePoint: DeleteRecyclePoint by inject()
     val getRecyclePointByQuery: GetRecyclePointByQuery by inject()
     val getRecyclePointsFilteredByType: GetPointsFilteredByType by inject()
+    val takeOffRubbish: TakeOffRubbish by inject()
 
     val getReviewsByPointId: GetReviewsByPointId by inject()
     val insertReview: InsertReview by inject()
@@ -144,6 +147,23 @@ fun Route.recyclePointRoute() {
                             status = HttpStatusCode.fromValue(response.statusCode)
                         )
                     }
+                }
+
+                post {
+                    val id = call.parameters["id"]?.toInt() ?: DEFAULT_ID
+                    val takeOff = call.receive<UserTakeOff>()
+
+                    val principal = call.principal<JWTPrincipal>()
+                    val uid =
+                        principal!!.payload.getClaim("uid").asInt()
+                    val result = takeOffRubbish(takeOff.copy(
+                        idUser = uid,
+                        idRecyclePoint = id
+                    ))
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.fromValue(result.statusCode)
+                    )
                 }
 
                 get {
