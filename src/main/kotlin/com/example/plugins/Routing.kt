@@ -13,7 +13,6 @@ fun Application.configureRouting() {
         route(Endpoint.API.path) {
             homeRoute()
             userRoute()
-            newsRoute()
             recyclePointRoute()
             reviewRoute()
             rubbishTypeRoute()

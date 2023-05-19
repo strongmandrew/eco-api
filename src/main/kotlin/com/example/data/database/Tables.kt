@@ -30,13 +30,6 @@ object RoleTable: IntIdTable("role") {
     val description = varchar("description", 256).nullable()
 }
 
-object NewsTable: IntIdTable("news") {
-    val title = varchar("title", 128)
-    val imageUrl = varchar("image_url", 128)
-    val dateCreated = datetime("date_of")
-    val url = varchar("url", 128)
-}
-
 object UserEmailCodeTable: IntIdTable("user_email_code") {
     val email = varchar("email", 128)
     val code = integer("code")

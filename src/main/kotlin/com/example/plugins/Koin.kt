@@ -6,7 +6,6 @@ import com.example.domain.usecase.email.CodeGenerator
 import com.example.domain.usecase.email.EmailAuthenticator
 import com.example.domain.usecase.email.EmailCredentials
 import com.example.domain.usecase.email.EmailService
-import com.example.domain.usecase.news.GetNews
 import com.example.domain.usecase.recyclePoint.*
 import com.example.domain.usecase.review.DeleteReviewById
 import com.example.domain.usecase.review.GetReviewById
@@ -29,8 +28,7 @@ fun Application.configureKoin() {
 
     install(Koin) {
         slf4jLogger()
-        modules(listOf(recyclePointModule, reviewModule,
-            newsModule, userModule, rubbishTypeModule, userTakeOffModule))
+        modules(listOf(recyclePointModule, reviewModule, userModule, rubbishTypeModule, userTakeOffModule))
     }
 }
 
@@ -59,12 +57,6 @@ val reviewModule = module {
     single { GetReviewById(get()) }
     single { InsertReview(get()) }
     single { DeleteReviewById(get()) }
-}
-
-val newsModule = module {
-    single<NewsDao> { NewsDaoImpl() }
-
-    single { GetNews(get()) }
 }
 
 val userModule = module {
