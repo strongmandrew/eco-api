@@ -94,8 +94,12 @@ fun Route.recyclePointRoute() {
 
             post {
 
+                val principal = call.principal<JWTPrincipal>()
+                val uid =
+                    principal!!.payload.getClaim("uid").asInt()
                 val point = call.receive<RecyclePoint>()
-                val result = insertRecyclePoint(point)
+
+                val result = insertRecyclePoint(point.copy(userIdProposed = uid))
                 call.respond(
                     message = result,
                     status = HttpStatusCode.fromValue(result.statusCode)

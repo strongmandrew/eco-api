@@ -123,6 +123,7 @@ class RecyclePointDaoImpl : RecyclePointDao {
                         it[description] =
                             point.locationDescription
                         it[type] = typeId.data
+                        it[userIdProposed] = point.userIdProposed
                     }.resultedValues?.singleOrNull()?.let {
                         ServiceResult.Success(it.toRecyclePoint())
                     } ?: ServiceResult.Error(Errors.INSERT_FAILED)
@@ -245,6 +246,7 @@ class RecyclePointDaoImpl : RecyclePointDao {
         photoPath = this[RecyclePointTable.photoPath],
         totalRating = this[RecyclePointTable.totalRating],
         approved = this[RecyclePointTable.approved],
+        userIdProposed = this[RecyclePointTable.userIdProposed]?.value
     )
 
     private suspend fun getRecyclePointIdByType(type: String):
@@ -272,6 +274,7 @@ class RecyclePointDaoImpl : RecyclePointDao {
         RecyclePointTable.photoPath,
         RecyclePointTable.totalRating,
         RecyclePointTable.approved,
-        RecyclePointTypeTable.type
+        RecyclePointTypeTable.type,
+        RecyclePointTable.userIdProposed
     )
 }

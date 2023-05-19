@@ -1,15 +1,11 @@
 openapi: 3.0.3
 info:
   title: Ecomap REST API
-  description: |-
-    This is REST API on a rubbish recycling which provides the 
-    ability to track
-  termsOfService: http://swagger.io/terms/
+  description:
+    This is convenient service for developers to build client apps
   contact:
-    email: apiteam@swagger.io
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    email:
+      - https://github.com/strongmandrew
   version: 1.0.0
 externalDocs:
   description: Find out more about Swagger
@@ -977,6 +973,9 @@ components:
         locationDescription:
           type: string
           example: Locates not far away from metro station Elektrosila
+        type:
+          type: object
+          example: Постамат
 
     OutputRecyclePoint:
       type: object
@@ -1013,7 +1012,8 @@ components:
           example: false
         type:
           type: string
-          example: Terminal
+          example: Терминал
+
     InputReview:
       type: object
       properties:

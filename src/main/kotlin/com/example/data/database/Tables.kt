@@ -53,6 +53,7 @@ object RecyclePointTable: IntIdTable("recycle_point") {
     val totalRating = double("total_rating").default(0.0)
     val approved = bool("approved").default(false)
     val type = reference("type_id", RecyclePointTypeTable.id)
+    val userIdProposed = reference("proposed_by_user", UserTable.id).nullable()
 }
 
 object RecyclePointTypeTable: IntIdTable("recycle_point_type") {
