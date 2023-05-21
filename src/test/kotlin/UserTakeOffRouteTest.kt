@@ -20,7 +20,8 @@ internal class UserTakeOffRouteTest {
             idUser = 9,
             idRecyclePoint = 19,
             idRubbishType = 1,
-            amountInGrams = 300.0
+            amountInGrams = 300.0,
+            percentRating = 80
         )
         private val TAKE_OFF = Endpoint.TAKE_OFF.path
     }
