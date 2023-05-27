@@ -23,7 +23,7 @@ fun Route.rubbishTypeRoute() {
 
     route(Endpoint.RUBBISH_TYPE.path) {
 
-        authenticate("admin-auth") {
+        authenticate("user-auth") {
             get("/total") {
                 val name = call.request.queryParameters["name"] ?: ""
                 val result = getTotalRubbishTypeTakeOff(name)

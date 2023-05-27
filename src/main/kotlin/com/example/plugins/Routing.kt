@@ -8,7 +8,7 @@ import io.ktor.server.routing.*
 fun Application.configureRouting() {
 
     routing {
-        swaggerUI(path = "docs", swaggerFile = "./documentation/doc" +
+        swaggerUI(path = "/docs", swaggerFile = "./documentation/doc" +
                 ".yaml")
         route(Endpoint.API.path) {
             homeRoute()

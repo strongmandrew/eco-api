@@ -37,7 +37,8 @@ class ReviewDaoImpl : ReviewDao {
             ).slice(
                 ReviewTable.id,
                 ReviewTable.review,
-                ReviewTable.dateCreated
+                ReviewTable.dateCreated,
+                ReviewTable.recyclePoint
             )
                 .select { ReviewTable.recyclePoint eq id }
                 .toList()
@@ -46,6 +47,7 @@ class ReviewDaoImpl : ReviewDao {
 
         ServiceResult.Success(points)
     } catch (e: Exception) {
+        println(e.message)
         ServiceResult.Error(Errors.DATABASE_ERROR)
     }
 

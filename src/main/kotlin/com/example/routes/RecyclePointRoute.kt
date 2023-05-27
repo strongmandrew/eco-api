@@ -152,22 +152,24 @@ fun Route.recyclePointRoute() {
                         )
                     }
                 }
+                
+                route(Endpoint.TAKE_OFF.path) {
+                    post {
+                        val id = call.parameters["id"]?.toInt() ?: DEFAULT_ID
+                        val takeOff = call.receive<UserTakeOff>()
 
-                post {
-                    val id = call.parameters["id"]?.toInt() ?: DEFAULT_ID
-                    val takeOff = call.receive<UserTakeOff>()
-
-                    val principal = call.principal<JWTPrincipal>()
-                    val uid =
-                        principal!!.payload.getClaim("uid").asInt()
-                    val result = takeOffRubbish(takeOff.copy(
-                        idUser = uid,
-                        idRecyclePoint = id
-                    ))
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.fromValue(result.statusCode)
-                    )
+                        val principal = call.principal<JWTPrincipal>()
+                        val uid =
+                            principal!!.payload.getClaim("uid").asInt()
+                        val result = takeOffRubbish(takeOff.copy(
+                            idUser = uid,
+                            idRecyclePoint = id
+                        ))
+                        call.respond(
+                            message = result,
+                            status = HttpStatusCode.fromValue(result.statusCode)
+                        )
+                    }
                 }
 
                 get {

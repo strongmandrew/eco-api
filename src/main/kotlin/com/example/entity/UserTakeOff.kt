@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class UserTakeOff(
     val id: Int? = null,
     val idUser: Int? = null,
-    val idRecyclePoint: Int,
+    val idRecyclePoint: Int? = null,
     val idRubbishType: Int,
     val amountInGrams: Double,
     val datetime: String? = null,

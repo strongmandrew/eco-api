@@ -63,6 +63,10 @@ enum class Errors(
     USER_EXISTS(
         message = "Existing user email cannot be blacklisted",
         statusCode = 202
+    ),
+    APPROVE_CODE_DOESNT_MATCH(
+        message = "Code sent to email doesn't match the input one",
+        statusCode = 202
     )
 
     /*fun wrapError(func: String): Errors {

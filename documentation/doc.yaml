@@ -663,6 +663,13 @@ paths:
 
   /rubbish_type/total:
     get:
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+          description: Certain rubbish type name
       security:
         - ApiKeyAuthUser: [ ]
       responses:
@@ -685,7 +692,7 @@ paths:
   /rubbish_type/{id}:
     get:
       security:
-        - ApiKeyAuthAdmin: [ ]
+        - ApiKeyAuthUser: [ ]
       responses:
         '200':
           description: Rubbish type description

@@ -163,13 +163,13 @@ class UserDaoImpl(
     ) = try {
 
         dbQuery {
-            val codesMatch = UserEmailCodeTable.select {
+            if (UserEmailCodeTable.select {
                 (UserEmailCodeTable
                     .email eq email) and (UserEmailCodeTable.code
                         eq code)
-            }.count() > 0
-
-            ServiceResult.Success(codesMatch)
+            }.count() > 0)
+                ServiceResult.Success(true)
+            else ServiceResult.Error(Errors.APPROVE_CODE_DOESNT_MATCH)
 
         }
 
