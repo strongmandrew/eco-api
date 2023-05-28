@@ -1,5 +1,6 @@
 package com.example.domain.usecase.email
 
+import com.example.utils.EnvProvider
 import javax.mail.Authenticator
 import javax.mail.PasswordAuthentication
 
@@ -10,8 +11,10 @@ class EmailAuthenticator {
 
         return object : Authenticator() {
             override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication(EmailCredentials
-                    .emailProfile, EmailCredentials.emailPassword)
+                return PasswordAuthentication(
+                    EnvProvider.emailProfile,
+                    EnvProvider.emailPassword
+                )
             }
         }
     }

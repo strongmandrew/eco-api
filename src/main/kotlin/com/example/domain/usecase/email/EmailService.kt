@@ -1,15 +1,18 @@
 package com.example.domain.usecase.email
 
+import com.example.utils.EnvProvider
 import com.example.utils.Errors
 import com.example.utils.ServiceResult
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.mail.Message
 import javax.mail.Session
 import javax.mail.Transport
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
-import kotlin.system.measureTimeMillis
 
 class EmailService(
     session: Session,
@@ -17,8 +20,10 @@ class EmailService(
 
     val message = MimeMessage(session)
 
-    suspend fun sendMessage(toEmail: String,
-                    code: Int): ServiceResult<Boolean> = coroutineScope {
+    suspend fun sendMessage(
+        toEmail: String,
+        code: Int,
+    ): ServiceResult<Boolean> = coroutineScope {
 
         return@coroutineScope try {
 
@@ -26,17 +31,19 @@ class EmailService(
 
             setInfo(message)
 
-            message.setText("Email validation code: $code. Keep it in " +
-                    "secret!")
+            message.setText(
+                "Email validation code: $code. Keep it in " +
+                        "secret!"
+            )
 
-            message.setRecipients(Message.RecipientType.TO,
-                InternetAddress.parse(toEmail, false))
+            message.setRecipients(
+                Message.RecipientType.TO,
+                InternetAddress.parse(toEmail, false)
+            )
 
-            measureTimeMillis {
-                CoroutineScope(SupervisorJob()).launch {
-                    Transport.send(message)
-                }
-            }.also { println("Elapsed time ${it / 1_000} s.") }
+            CoroutineScope(SupervisorJob()).launch {
+                Transport.send(message)
+            }
 
             ServiceResult.Success(true)
 
@@ -53,11 +60,16 @@ class EmailService(
     }
 
     private fun setInfo(message: MimeMessage) {
-        message.setFrom(InternetAddress(EmailCredentials.emailFrom,
-            EmailCredentials.emailAccount))
+        message.setFrom(
+            InternetAddress(
+                EnvProvider.emailFrom,
+                EnvProvider.emailAccount
+            )
+        )
 
-        message.replyTo =InternetAddress.parse("no_reply@ecomap" +
-                ".com", false)
+        message.replyTo = InternetAddress.parse(
+            EnvProvider.emailFrom, false
+        )
 
         message.sentDate = Date()
     }

@@ -4,7 +4,6 @@ import com.example.data.*
 import com.example.domain.dao.*
 import com.example.domain.usecase.email.CodeGenerator
 import com.example.domain.usecase.email.EmailAuthenticator
-import com.example.domain.usecase.email.EmailCredentials
 import com.example.domain.usecase.email.EmailService
 import com.example.domain.usecase.recyclePoint.*
 import com.example.domain.usecase.review.DeleteReviewById
@@ -18,6 +17,7 @@ import com.example.domain.usecase.rubbishType.InsertRubbishType
 import com.example.domain.usecase.user.*
 import com.example.domain.usecase.user.jwt.JWTHandler
 import com.example.domain.usecase.userTakeOff.*
+import com.example.utils.EnvProvider
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
@@ -68,8 +68,10 @@ val userModule = module {
     single<UserDao> { UserDaoImpl(get()) }
     single<BlacklistDao> { BlacklistDaoImpl() }
 
-    val session = Session.getInstance(EmailCredentials.props,
-        EmailAuthenticator().invoke())
+    val session = Session.getInstance(
+        EnvProvider.mailProps,
+        EmailAuthenticator().invoke()
+    )
 
     factory { JWTHandler() }
     factory { EmailService(session) }

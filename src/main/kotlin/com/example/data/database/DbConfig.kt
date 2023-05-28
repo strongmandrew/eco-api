@@ -1,30 +1,26 @@
 package com.example.data.database
 
+import com.example.utils.EnvProvider
+
 sealed class DbConfig(
     val dbNameConfig: String,
-    envHost: String,
-    envPort: String,
-    envConnection: String,
-    envUser: String,
-    envPassword: String,
+    val host: String,
+    val port: String,
+    val schema: String,
+    val user: String,
+    val password: String,
     val driver: String,
 ) {
-    private val host = System.getenv(envHost)
-    private val port = System.getenv(envPort)
-    private val connection = System.getenv(envConnection)
-    val user: String = System.getenv(envUser)
-    val password: String = System.getenv(envPassword)
-
     val url: String
-        get() = "$dbNameConfig://$host:$port/$connection"
+        get() = "$dbNameConfig://$host:$port/$schema"
 
     object MySqlConfig: DbConfig(
         dbNameConfig = "jdbc:mysql",
-        envHost = "mysql.host",
-        envPort = "mysql.port",
-        envConnection = "mysql.connection",
-        envUser = "mysql.user",
-        envPassword = "mysql.password",
+        host = EnvProvider.mySqlHost,
+        port = EnvProvider.mySqlPort,
+        schema = EnvProvider.mySqlSchema,
+        user = EnvProvider.mySqlUser,
+        password = EnvProvider.mySqlPassword,
         driver = "com.mysql.cj.jdbc.Driver"
     )
 

@@ -1,15 +1,15 @@
 package com.example.plugins
 
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.domain.dao.UserDao
-import com.example.domain.usecase.user.jwt.JWTCredentials
 import com.example.domain.usecase.user.jwt.JWTHandler
 import com.example.domain.usecase.user.jwt.Role
+import com.example.utils.EnvProvider
 import com.example.utils.ServiceResult
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureSecurity() {
@@ -23,24 +23,33 @@ fun Application.configureSecurity() {
 
             verifier {
                 JWT.require(
-                    Algorithm.HMAC256(JWTCredentials.jwtSecret)
-                ).withIssuer(JWTCredentials.jwtIss)
+                    Algorithm.HMAC256(
+                        EnvProvider.jwtSecret
+                    )
+                ).withIssuer(EnvProvider.jwtIssuer)
                     .build()
             }
 
             validate {
 
-                val userId = it.getClaim(JWTHandler
-                    .JWT_USER_ID, Int::class)
+                val userId = it.getClaim(
+                    JWTHandler
+                        .JWT_USER_ID, Int::class
+                )
 
-                val roleId = it.getClaim(JWTHandler.JWT_ROLE_ID,
-                    Int::class)
+                val roleId = it.getClaim(
+                    JWTHandler.JWT_ROLE_ID,
+                    Int::class
+                )
 
-                val timesChanged = it.getClaim(JWTHandler
-                    .JWT_TIMES_CHANGED, Int::class)
+                val timesChanged = it.getClaim(
+                    JWTHandler
+                        .JWT_TIMES_CHANGED, Int::class
+                )
 
-                val user = userDao.getUserById(userId ?:
-                return@validate null)
+                val user = userDao.getUserById(
+                    userId ?: return@validate null
+                )
 
                 return@validate when (user) {
 
@@ -49,12 +58,12 @@ fun Application.configureSecurity() {
                             (roleId == Role.USER.id || roleId ==
                                     Role.ADMIN.id) &&
                             user.data.timesChanged == timesChanged
-                            ) {
+                        ) {
                             JWTPrincipal(it.payload)
-                        }
-                        else
+                        } else
                             null
                     }
+
                     is ServiceResult.Error -> {
                         null
                     }
@@ -68,24 +77,31 @@ fun Application.configureSecurity() {
 
             verifier {
                 JWT.require(
-                    Algorithm.HMAC256(JWTCredentials.jwtSecret)
-                ).withIssuer(JWTCredentials.jwtIss)
+                    Algorithm.HMAC256(EnvProvider.jwtSecret)
+                ).withIssuer(EnvProvider.jwtIssuer)
                     .build()
             }
 
             validate {
 
-                val userId = it.getClaim(JWTHandler
-                    .JWT_USER_ID, Int::class)
+                val userId = it.getClaim(
+                    JWTHandler
+                        .JWT_USER_ID, Int::class
+                )
 
-                val roleId = it.getClaim(JWTHandler.JWT_ROLE_ID,
-                    Int::class)
+                val roleId = it.getClaim(
+                    JWTHandler.JWT_ROLE_ID,
+                    Int::class
+                )
 
-                val timesChanged = it.getClaim(JWTHandler
-                    .JWT_TIMES_CHANGED, Int::class)
+                val timesChanged = it.getClaim(
+                    JWTHandler
+                        .JWT_TIMES_CHANGED, Int::class
+                )
 
-                val user = userDao.getUserById(userId ?:
-                return@validate null)
+                val user = userDao.getUserById(
+                    userId ?: return@validate null
+                )
 
                 return@validate when (user) {
 
@@ -95,10 +111,10 @@ fun Application.configureSecurity() {
                             user.data.timesChanged == timesChanged
                         ) {
                             JWTPrincipal(it.payload)
-                        }
-                        else
+                        } else
                             null
                     }
+
                     is ServiceResult.Error -> {
                         null
                     }
