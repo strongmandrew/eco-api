@@ -42,7 +42,7 @@ class UserDaoImpl(
                 .singleOrNull()?.let {
                     ServiceResult.Success(it.toUser())
 
-                } ?: ServiceResult.Error(Errors.NOT_FOUND)
+                } ?: ServiceResult.Error(Errors.USER_NOT_FOUND)
         }
     } catch (e: Exception) {
         ServiceResult.Error(Errors.DATABASE_ERROR)
@@ -115,7 +115,7 @@ class UserDaoImpl(
                         email
             }.singleOrNull()?.let {
                 ServiceResult.Success(it.toUser())
-            } ?: ServiceResult.Error(Errors.NOT_FOUND)
+            } ?: ServiceResult.Error(Errors.USER_NOT_FOUND)
         }
     } catch (e: Exception) {
         ServiceResult.Error(Errors.DATABASE_ERROR)

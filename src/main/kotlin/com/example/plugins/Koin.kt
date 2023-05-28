@@ -78,7 +78,7 @@ val userModule = module {
     factory { CodeGenerator() }
     single { RegisterUser(get()) }
     single { SetOrUpdateValidationCode(get()) }
-    single { SendValidation(get(), get(), get()) }
+    single { SendValidation(get(), get(), get(), get()) }
     single { ApproveValidation(get(), get()) }
     single { GetUserByEmail(get()) }
     single { AuthorizeUser(get(), get(), get()) }

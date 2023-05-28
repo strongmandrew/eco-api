@@ -18,6 +18,10 @@ enum class Errors(
         message = "Entity you're looking for cannot be found",
         statusCode = 202
     ),
+    USER_NOT_FOUND(
+        message = "User you're looking for seems to not exist",
+        statusCode = 202
+    ),
     UPDATE_FAILED(
         message = "Failed to update database entry",
     ),
